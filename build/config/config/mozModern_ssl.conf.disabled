@@ -1,0 +1,31 @@
+#######
+### NGINX SSL configuration
+### Generated using the Mozilla SSL Configuration Generator
+### (https://ssl-config.mozilla.org)
+### 'Modern' profile for NGINX 1.17 with OpenSSL 1.1.1c HSTS optional
+### Last generated: October 16, 2019
+#######
+
+# SSL certificates should be defined in the relevant server block
+
+# SSL parameters
+ssl_session_timeout 1d;
+ssl_session_cache shared:SSL:10m;
+ssl_session_tickets off;
+
+# SSL protocols and ciphers
+ssl_protocols TLSv1.3;
+ssl_prefer_server_ciphers off;
+
+# HSTS (6 months = 15768000 seconds)
+#add_header Strict-Transport-Security "max-age=63072000" always;
+
+# OCSP Stapling
+# fetch OCSP records from URL in ssl_certificate and cache them
+ssl_stapling on;
+ssl_stapling_verify on;
+
+# verify chain of trust of OCSP response using Root CA and Intermediate certs
+ssl_trusted_certificate /certs/chain.pem;
+
+# resolver should be specified in nginx.conf or in networking configuration

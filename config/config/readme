@@ -1,0 +1,7 @@
+- Place all your configuration customization files in this directory
+    - feel free to edit the included recommended files
+    - files here override container settings including nginx.conf
+- Files here are placed in the HTTP configuration context
+- ONLY files that end with '.conf' will be processed!
+    - if you want to keep a file for reference or disable it temporarily, 
+        simply change the extension.  I like using '.conf.disabled'.
