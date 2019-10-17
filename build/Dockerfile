@@ -1,6 +1,6 @@
 FROM nginx:mainline-alpine
 
-# add fun error pages
+# add fun error pages & LetsEncrypt challenge directory outside webroot
 RUN apk --no-cache add git \
     && cd /usr/share/nginx/html \
     && rm -rf * \
@@ -8,7 +8,8 @@ RUN apk --no-cache add git \
     && apk del git \
     && mv /tmp/errorpages/ ./ \
     && rm -rf /tmp/* \
-    && rm -rf /tmp/.git*
+    && rm -rf /tmp/.git* \
+    && mkdir /LEchallenge
 
 # standardized labels
 LABEL maintainer="Asif Bacchus <asif@bacchus.cloud>"
