@@ -1,12 +1,5 @@
 SERVER_NAMES="domain.tld www.domain.tld server.domain.tld alt.domain.tld"
-
 HSTS=FALSE
 TLS13_ONLY=FALSE
 
-# certificates
-TLS_CERTIFICATE=/path/to/your/cert/fullchain.pem
-TLS_KEY=/path/to/your/privkey.pem
-TLS_CHAIN=/path/to/your/cert/chain.pem
-
-# if you're using TLS 1.2
-TLS_DHPARAM=/path/to/your/dhparam.pem
+#EOF
