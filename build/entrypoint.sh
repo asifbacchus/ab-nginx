@@ -20,7 +20,7 @@ if [ "$HSTS" = TRUE ]; then
     printf "done\n"
 fi
 
-# activate SSL configuration as appropraite and only if certs exist
+# activate SSL configuration as appropriate and only if certs exist
 if [ "$TLS13_ONLY" = FALSE ]; then
     if [ -f "/certs/fullchain.pem" ] && \
         [ -f "/certs/privkey.pem" ] && \
