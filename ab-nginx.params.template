@@ -2,4 +2,11 @@ SERVER_NAMES="domain.tld www.domain.tld server.domain.tld alt.domain.tld"
 HSTS=FALSE
 TLS13_ONLY=FALSE
 
+# Certificate files to be bind-mounted
+SSL_CERT=/path/to/your/ssl-certificate/fullchain.pem
+SSL_KEY=/path/to/your/ssl-private-key/privkey.pem
+SSL_CHAIN=/path/to/your/ssl-certificate-chain/chain.pem
+DH=/path/to/your/diffie-hellman-parameters-file/dhparam.pem
+
+
 #EOF
