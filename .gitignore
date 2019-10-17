@@ -5,3 +5,6 @@
 !.vscode/extensions.json
 !.vscode/numbered-bookmarks.json
 *.code-workspace
+
+# don't track my testing params file
+ab-nginx.params
