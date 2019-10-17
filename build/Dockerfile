@@ -1,5 +1,15 @@
 FROM nginx:mainline-alpine
 
+# add fun error pages
+RUN apk --no-cache add git \
+    && cd /usr/share/nginx/html \
+    && rm -rf * \
+    && git clone https://git.asifbacchus.app/asif/fun-errorpages.git /tmp \
+    && apk del git \
+    && mv /tmp/errorpages/ ./ \
+    && rm -rf /tmp/* \
+    && rm -rf /tmp/.git*
+
 # standardized labels
 LABEL maintainer="Asif Bacchus <asif@bacchus.cloud>"
 LABEL org.label-schema.cmd=""
