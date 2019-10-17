@@ -20,6 +20,10 @@ server {
         autoindex on;
     }
 
+    # error pages
+    include /etc/nginx/errorpages.conf;
+}
+
 server {
     listen 443 ssl https2;
     include /etc/nginx/server_names.conf;
@@ -30,4 +34,7 @@ server {
     location / {
         try_files $uri $uri/ =404;        
     }
+
+    # error pages
+    include /etc/nginx/errorpages.conf;
 }
