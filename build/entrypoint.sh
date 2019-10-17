@@ -34,8 +34,8 @@ if [ "$TLS13_ONLY" = FALSE ]; then
             
             # activate SSL test server block if it exists
             if [ -f "/etc/nginx/sites/05-test-secured.conf" ]; then
-                mv /etc/nginx/sites/05-test-secured.conf.disabled \
-                    /etc/nginx/sites/05-test-secured.conf
+                mv /etc/nginx/sites/05-test_secured.conf.disabled \
+                    /etc/nginx/sites/05-test_secured.conf
             fi
     fi
 elif [ "$TLS13_ONLY" = TRUE ]; then
@@ -50,8 +50,8 @@ elif [ "$TLS13_ONLY" = TRUE ]; then
             
             # activate SSL test server block if it exists
             if [ -f "/etc/nginx/sites/05-test-secured.conf" ]; then
-                mv /etc/nginx/sites/05-test-secured.conf.disabled \
-                    /etc/nginx/sites/05-test-secured.conf
+                mv /etc/nginx/sites/05-test_secured.conf.disabled \
+                    /etc/nginx/sites/05-test_secured.conf
             fi
     fi
 fi
