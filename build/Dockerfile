@@ -12,8 +12,8 @@ RUN apk --no-cache add git \
 
 # standardized labels
 LABEL maintainer="Asif Bacchus <asif@bacchus.cloud>"
-LABEL org.label-schema.cmd=""
-LABEL org.label-schema.description=""
+LABEL org.label-schema.cmd="docker run -d --name ab-nginx [--env-file ab-nginx.params] [-v certs:/certs] ab-nginx"
+LABEL org.label-schema.description="NGINX-mainline-alpine with more logical file location layout and automatic SSL set up if certificates are provided."
 LABEL org.label-schema.name="ab-nginx"
 LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.url="https://git.asifbacchus.app/ab-docker/ab-nginx"
