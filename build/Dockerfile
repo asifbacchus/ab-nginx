@@ -25,6 +25,7 @@ LABEL org.label-schema.version="0.1-beta"
 COPY entrypoint.sh /entrypoint.sh
 COPY config /etc/nginx/
 COPY sites /etc/nginx/sites/
+COPY webroot /usr/share/nginx/html/
 
 # expose ports
 EXPOSE 80 443
