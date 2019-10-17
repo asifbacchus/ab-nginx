@@ -14,9 +14,9 @@ printf "done\n"
 if [ "$HSTS" = TRUE ]; then
     printf "Activating HSTS configuration... "
     sed -i -e "s/^#add_header/add_header/" \
-        /etc/nginx/config/mozIntermediate_ssl.conf.disabled
+        /etc/nginx/ssl-config/mozIntermediate_ssl.conf.disabled
     sed -i -e "s/^#add_header/add_header/" \
-        /etc/nginx/config/mozModern_ssl.conf.disabled
+        /etc/nginx/ssl-config/mozModern_ssl.conf.disabled
     printf "done\n"
 fi
 
@@ -29,8 +29,8 @@ if [ "$TLS13_ONLY" = FALSE ]; then
             printf "Certificates found. Securing deployment using TLS 1.2\n"
 
             # activate shared SSL configuration file
-            mv /etc/nginx/config/mozIntermediate_ssl.conf.disabled \
-                /etc/nginx/config/mozIntermediate_ssl.conf
+            mv /etc/nginx/ssl-config/mozIntermediate_ssl.conf.disabled \
+                /etc/nginx/ssl-config/mozIntermediate_ssl.conf
             
             if [ -f "/etc/nginx/sites/note" ]; then
                 # activate SSL test server block & deactivate normal one
@@ -47,8 +47,8 @@ elif [ "$TLS13_ONLY" = TRUE ]; then
             printf "Certificates found. Securing deployment using TLS 1.3\n"
 
             # activate shared SSL configuration file
-            mv /etc/nginx/config/mozModern_ssl.conf.disabled \
-                /etc/nginx/config/mozModern_ssl.conf
+            mv /etc/nginx/ssl-config/mozModern_ssl.conf.disabled \
+                /etc/nginx/ssl-config/mozModern_ssl.conf
             
             if [ -f "/etc/nginx/sites/note" ]; then
                 # activate SSL test server block & deactivate normal one
