@@ -63,6 +63,9 @@ if [ ! -f "./ab-nginx.params" ]; then
     exit 3
 fi
 
+# read .params file
+. ./ab-nginx.params
+
 # check for certs if using SSL
 if [ "$SSL_CERT" ]; then
     if [ ! -f "$SSL_CERT" ]; then
@@ -120,9 +123,6 @@ while [ $# -gt 0 ]; do
     esac
     shift
 done
-
-# read .params file
-. ./ab-nginx.params
 
 
 # run without TLS
