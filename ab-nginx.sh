@@ -87,7 +87,7 @@ if [ "$TLS13_ONLY" = FALSE ]; then
     if [ -z "$DH" ]; then
         printf "${err}\nA DHparam file must be specified when using TLS 1.2. Exiting.${norm}\n"
         exit 5
-    elif [ -f "$DH" ]; then
+    elif [ ! -f "$DH" ]; then
         printf "${err}\nCannot find specified DHparam file. Exiting.${norm}\n"
         exit 5
     fi
