@@ -11,7 +11,7 @@ sed -i -e "s%<SERVER_NAMES>%${SERVER_NAMES}%" /etc/nginx/server_names.conf
 printf "done\n"
 
 # activate HSTS
-if [ "$HSTS" -eq TRUE ]; then
+if [ "$HSTS" = TRUE ]; then
     printf "Activating HSTS configuration... "
     sed -i -e "s/^#add_header/add_header/" \
         /etc/nginx/config/mozIntermediate_ssl.conf.disabled
