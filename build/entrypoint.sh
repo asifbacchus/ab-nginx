@@ -32,14 +32,10 @@ if [ "$TLS13_ONLY" = FALSE ]; then
             mv /etc/nginx/config/mozIntermediate_ssl.conf.disabled \
                 /etc/nginx/config/mozIntermediate_ssl.conf
             
-            # activate SSL test server block if it exists
-            if [ -f "/etc/nginx/sites/05-test_secured.conf" ]; then
+            if [ -f "/etc/nginx/sites/note" ]; then
+                # activate SSL test server block & deactivate normal one
                 mv /etc/nginx/sites/05-test_secured.conf.disabled \
                     /etc/nginx/sites/05-test_secured.conf
-            fi
-
-            # deactivate standard test server block if it exists
-            if [ -f "/etc/nginx/sites/05-test_nonsecured.conf" ]; then
                 mv /etc/nginx/sites/05-test_nonsecured.conf \
                     /etc/nginx/sites/05-test_nonsecured.conf.disabled
             fi
@@ -54,14 +50,10 @@ elif [ "$TLS13_ONLY" = TRUE ]; then
             mv /etc/nginx/config/mozModern_ssl.conf.disabled \
                 /etc/nginx/config/mozModern_ssl.conf
             
-            # activate SSL test server block if it exists
-            if [ -f "/etc/nginx/sites/05-test_secured.conf" ]; then
+            if [ -f "/etc/nginx/sites/note" ]; then
+                # activate SSL test server block & deactivate normal one
                 mv /etc/nginx/sites/05-test_secured.conf.disabled \
                     /etc/nginx/sites/05-test_secured.conf
-            fi
-
-            # deactivate standard test server block if it exists
-            if [ -f "/etc/nginx/sites/05-test_nonsecured.conf" ]; then
                 mv /etc/nginx/sites/05-test_nonsecured.conf \
                     /etc/nginx/sites/05-test_nonsecured.conf.disabled
             fi
