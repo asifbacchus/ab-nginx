@@ -30,7 +30,9 @@ COPY sites /etc/nginx/sites/
 EXPOSE 80 443
 
 # default environment variables
-ENV SERVER_NAME="_"
+ENV SERVER_NAMES="_"
+ENV HSTS=FALSE
+ENV TLS13_ONLY=FALSE
 
 # entrypoint script
 ENTRYPOINT [ "/entrypoint.sh" ]
