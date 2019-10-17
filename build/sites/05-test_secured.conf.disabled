@@ -1,8 +1,31 @@
 ### UNsecured test page
 
 server {
-    listen 443;
+    listen 80;
     include /etc/nginx/server_names.conf;
+
+    # default redirect to properly formed HTTPS location
+    location / {
+        return 301 https://$host$request_uri;
+    }
+    
+    # process Let's Encrypt challenges
+    location ^~ /.well-known/acme-challenge {
+        # log requests for security reasons
+        access_log /var/log/nginx/LetsEncrypt_access.log main;
+        error_log /var/log/nginx/LetsEncrypt_error.log warn;
+
+        default_type text/plain;
+        root /usr/share/nginx/html/letsencrypt;
+        autoindex on;
+    }
+
+server {
+    listen 443 ssl https2;
+    include /etc/nginx/server_names.conf;
+
+    # ssl certificates
+    include /etc/nginx/ssl_certs.conf;
 
     location / {
         try_files $uri $uri/ =404;        
