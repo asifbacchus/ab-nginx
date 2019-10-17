@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-### start openldap container using params file variables
+### start ab-nginx container using params file variables
 #
 
 # text formatting presets
@@ -122,7 +122,7 @@ while [ $# -gt 0 ]; do
 done
 
 # read .params file
-. ./ab-openldap.params
+. ./ab-nginx.params
 
 
 # run without TLS
@@ -151,7 +151,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
             ab-nginx:testing /bin/sh
     else
         # exec normally
-        printf "${cyan}\nRunning OPENLDAP on %s (TLS 1.2)...${norm}\n" "$container_name"
+        printf "${cyan}\nRunning NGINX on %s (TLS 1.2)...${norm}\n" "$container_name"
         docker run --rm -d --name ${container_name} \
             --env-file ab-nginx.params \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
@@ -175,7 +175,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
             ab-nginx:testing /bin/sh
     else
         # exec normally
-        printf "${cyan}\nRunning OPENLDAP on %s (TLS 1.3)...${norm}\n" "$container_name"
+        printf "${cyan}\nRunning NGINX on %s (TLS 1.3)...${norm}\n" "$container_name"
         docker run --rm -d --name ${container_name} \
             --env-file ab-nginx.params \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
