@@ -15,6 +15,8 @@ yellow=$(tput setaf 3)
 ### parameter defaults
 container_name="ab-nginx"
 shell=false
+HTTP_PORT=80
+HTTPS_PORT=443
 unset CONFIG_DIR
 unset WEBROOT_DIR
 unset vmount
@@ -159,7 +161,7 @@ if [ -z "$SSL_CERT" ]; then
         docker run --rm -it --name ${container_name} \
             --env-file ab-nginx.params \
             $vmount \
-            -p 80:80 \
+            -p ${HTTP_PORT}:80 \
             ab-nginx:testing /bin/sh
     else
         # exec normally
@@ -167,7 +169,7 @@ if [ -z "$SSL_CERT" ]; then
         docker run --rm -d --name ${container_name} \
         --env-file ab-nginx.params \
         $vmount \
-        -p 80:80 \
+        -p ${HTTP_PORT}:80 \
         ab-nginx:testing
     fi
 # run with TLS1.2
@@ -182,7 +184,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
             -v "$DH":/certs/dhparam.pem:ro \
-            -p 80:80 -p 443:443 \
+            -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
             ab-nginx:testing /bin/sh
     else
         # exec normally
@@ -194,7 +196,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
             -v "$DH":/certs/dhparam.pem:ro \
-            -p 80:80 -p 443:443 \
+            -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
             ab-nginx:testing
     fi
 # run with TLS1.3
@@ -208,7 +210,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
-            -p 80:80 -p 443:443 \
+            -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
             ab-nginx:testing /bin/sh
     else
         # exec normally
@@ -219,7 +221,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
-            -p 80:80 -p 443:443 \
+            -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
             ab-nginx:testing
     fi
 fi
