@@ -15,6 +15,8 @@ yellow=$(tput setaf 3)
 ### parameter defaults
 container_name="ab-nginx"
 shell=false
+unset CONFIG_DIR
+unset WEBROOT_DIR
 
 
 scriptHelp () {
@@ -93,7 +95,19 @@ if [ "$TLS13_ONLY" = FALSE ]; then
     fi
 fi
 
+# check if specified config directory exists
+if [ "$CONFIG_DIR" ] && [ ! -d "$CONFIG_DIR" ]; then
+    printf "${err}\nCannot find specified configuration file directory. Exiting.${norm}\n"
+    exit 4
+fi
 
+# check if specified webroot directory exists
+if [ "$WEBROOT_DIR" ] && [ ! -d "$WEBROOT_DIR" ]; then
+    printf "${err}\nCannot find specified webroot directory. Exiting.${norm}\n"
+    exit 4
+fi
+
+exit 99
 # process startup parameters
 while [ $# -gt 0 ]; do
     case "$1" in
