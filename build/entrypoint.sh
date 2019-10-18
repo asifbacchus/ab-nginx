@@ -10,6 +10,17 @@ printf "\nUpdating server name list... "
 sed -i -e "s%<SERVER_NAMES>%${SERVER_NAMES}%" /etc/nginx/server_names.conf
 printf "done\n"
 
+# update access log global preference
+if [ "$ACCESS_LOG" = "OFF" ]; then
+    printf "Turning access log OFF..."
+    sed -i -e "s%<ACCESS_LOG_SETTING>%OFF%" /etc/nginx/nginx.conf
+    printf "done\n"
+elif [ "$ACCESS_LOG" = "ON" ]; then
+    printf "Turning access log ON..."
+    sed -i -e "s%<ACCESS_LOG_SETTING>%/var/log/nginx/access.log combined%" /etc/nginx/nginx.conf
+    printf "done\n"
+fi
+
 # update HTTPS redirect port if SSL server test block exists
 if [ -f "/etc/nginx/sites/note" ]; then
     printf "\nUpdating port redirects...\n"
