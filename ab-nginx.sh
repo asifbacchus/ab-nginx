@@ -177,7 +177,7 @@ if [ -z "$SSL_CERT" ]; then
             --env-file ab-nginx.params \
             $vmount \
             -p ${HTTP_PORT}:80 \
-            ab-nginx:testing /bin/sh
+            docker.asifbacchus.app/nginx/ab-nginx:latest /bin/sh
     else
         # exec normally
         printf "${cyan}\nRunning NGINX on %s...${norm}\n" "$container_name"
@@ -185,7 +185,7 @@ if [ -z "$SSL_CERT" ]; then
         --env-file ab-nginx.params \
         $vmount \
         -p ${HTTP_PORT}:80 \
-        ab-nginx:testing
+        docker.asifbacchus.app/nginx/ab-nginx:latest
     fi
 # run with TLS1.2
 elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
@@ -200,7 +200,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
             -v "$DH":/certs/dhparam.pem:ro \
             -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
-            ab-nginx:testing /bin/sh
+            docker.asifbacchus.app/nginx/ab-nginx:latest /bin/sh
     else
         # exec normally
         printf "${cyan}\nRunning NGINX on %s (TLS 1.2)...${norm}\n" "$container_name"
@@ -212,7 +212,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
             -v "$DH":/certs/dhparam.pem:ro \
             -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
-            ab-nginx:testing
+            docker.asifbacchus.app/nginx/ab-nginx:latest
     fi
 # run with TLS1.3
 elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
@@ -226,7 +226,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
             -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
-            ab-nginx:testing /bin/sh
+            docker.asifbacchus.app/nginx/ab-nginx:latest /bin/sh
     else
         # exec normally
         printf "${cyan}\nRunning NGINX on %s (TLS 1.3)...${norm}\n" "$container_name"
@@ -237,7 +237,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
             -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
-            ab-nginx:testing
+            docker.asifbacchus.app/nginx/ab-nginx:latest
     fi
 fi
 
