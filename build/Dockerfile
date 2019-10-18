@@ -12,14 +12,14 @@ RUN apk --no-cache add git \
 
 # standardized labels
 LABEL maintainer="Asif Bacchus <asif@bacchus.cloud>"
-LABEL org.label-schema.cmd="docker run -d --name ab-nginx [--env-file ab-nginx.params] [-v certs:/certs] ab-nginx"
+LABEL org.label-schema.cmd="docker run -d --rm --name ab-nginx [--env-file ab-nginx.params] [-v /my_certs:/certs] [-v /my_html_stuff:/usr/share/nginx/html] [-v /my_nginx_config_files:/etc/nginx/config] ab-nginx"
 LABEL org.label-schema.description="NGINX-mainline-alpine with more logical file location layout and automatic SSL set up if certificates are provided."
 LABEL org.label-schema.name="ab-nginx"
 LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.url="https://git.asifbacchus.app/ab-docker/ab-nginx"
 LABEL org.label-schema.usage="https://git.asifbacchus.app/ab-docker/ab-nginx/wiki"
 LABEL org.label-schema.vcs-url="https://git.asifbacchus.app/ab-docker/ab-nginx.git"
-LABEL org.label-schema.version="0.1-beta"
+LABEL org.label-schema.version="1.0"
 
 # copy configuration files
 COPY entrypoint.sh /entrypoint.sh
