@@ -18,6 +18,7 @@ shell=false
 HTTP_PORT=80
 HTTPS_PORT=443
 unset CONFIG_DIR
+unset SERVERS_DIR
 unset WEBROOT_DIR
 unset vmount
 
@@ -104,19 +105,33 @@ if [ "$CONFIG_DIR" ] && [ ! -d "$CONFIG_DIR" ]; then
     exit 4
 fi
 
+# check if specified server-block directory exists
+if [ "$SERVERS_DIR" ] && [ ! -d "$SERVERS_DIR" ]; then
+    printf "${err}\nCannot find specified server-block file directory. Exiting.${norm}\n"
+    exit 4
+fi
+
 # check if specified webroot directory exists
 if [ "$WEBROOT_DIR" ] && [ ! -d "$WEBROOT_DIR" ]; then
     printf "${err}\nCannot find specified webroot directory. Exiting.${norm}\n"
     exit 4
 fi
 
-# set up volume mounts for config and/or webroot
-if [ -z "$CONFIG_DIR" ] && [ -z "$WEBROOT_DIR" ]; then
+# set up volume mounts for config, servers, webroot
+if [ -z "$CONFIG_DIR" ] && [ -z "$WEBROOT_DIR" ] && [ -z "$SERVERS_DIR" ]; then
     vmount=""
+elif [ "$CONFIG_DIR" ] && [ "$WEBROOT_DIR" ] && [ "$SERVERS_DIR" ]; then
+    vmount="-v $CONFIG_DIR:/etc/nginx/config/ -v $SERVERS_DIR:/etc/nginx/sites/ -v $WEBROOT_DIR:/usr/share/nginx/html/"
+elif [ "$CONFIG_DIR" ] && [ "$SERVERS_DIR" ]; then
+    vmount="-v $CONFIG_DIR:/etc/nginx/config/ -v $SERVERS_DIR:/etc/nginx/sites/"
 elif [ "$CONFIG_DIR" ] && [ "$WEBROOT_DIR" ]; then
     vmount="-v $CONFIG_DIR:/etc/nginx/config/ -v $WEBROOT_DIR:/usr/share/nginx/html/"
+elif [ "$SERVERS_DIR" ] && [ "$WEBROOT_DIR" ]; then
+    vmount="-v $SERVERS_DIR:/etc/nginx/sites/ -v $WEBROOT_DIR:/usr/share/nginx/html/"
 elif [ "$CONFIG_DIR" ]; then
     vmount="-v $CONFIG_DIR:/etc/nginx/config/"
+elif [ "$SERVERS_DIR" ]; then
+    vmount="-v $SERVERS_DIR:/etc/nginx/sites/"
 elif [ "$WEBROOT_DIR" ]; then
     vmount="-v $WEBROOT_DIR:/usr/share/nginx/html/"
 fi
