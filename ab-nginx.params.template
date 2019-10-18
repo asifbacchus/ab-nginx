@@ -8,6 +8,13 @@
 #####
 
 
+### Timezone
+# This doesn't impact any functionality of the container, but it does make your 
+# logs easier to understand if they report the correct local time, right?
+# (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+TZ=Area/Location
+
+
 ### NGINX options
 # Hostnames to which this instance of NGINX should answer:
 # By default, this is set to '_' meaning 'match anything'.  However, that won't 

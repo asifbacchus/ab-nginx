@@ -31,6 +31,7 @@ COPY webroot /usr/share/nginx/html/
 EXPOSE 80 443
 
 # default environment variables
+ENV TZ=Etc/UTC
 ENV SERVER_NAMES="_"
 ENV HTTP_PORT=80
 ENV HTTPS_PORT=443
