@@ -17,6 +17,7 @@ container_name="ab-nginx"
 shell=false
 unset CONFIG_DIR
 unset WEBROOT_DIR
+unset vmount
 
 
 scriptHelp () {
@@ -107,6 +108,17 @@ if [ "$WEBROOT_DIR" ] && [ ! -d "$WEBROOT_DIR" ]; then
     exit 4
 fi
 
+# set up volume mounts for config and/or webroot
+if [ -z "$CONFIG_DIR" ] && [ -z "$WEBROOT_DIR" ]; then
+    vmount=""
+elif [ "$CONFIG_DIR" ] && [ "$WEBROOT_DIR" ]; then
+    vmount="-v $CONFIG_DIR:/etc/nginx/config/ -v $WEBROOT_DIR:/usr/share/nginx/html/"
+elif [ "$CONFIG_DIR" ]; then
+    vmount="-v $CONFIG_DIR:/etc/nginx/config/"
+elif [ "$WEBROOT_DIR" ]; then
+    vmount="-v $WEBROOT_DIR:/usr/share/nginx/html/"
+fi
+
 
 # process startup parameters
 while [ $# -gt 0 ]; do
@@ -144,11 +156,19 @@ if [ -z "$SSL_CERT" ]; then
     if [ $shell = true ]; then
         # exec shell
         printf "${cyan}\nRunning SHELL on %s...${norm}\n" "$container_name"
-        docker run --rm -it --name ${container_name} --env-file ab-nginx.params -p 80:80 ab-nginx:testing /bin/sh
+        docker run --rm -it --name ${container_name} \
+            --env-file ab-nginx.params \
+            $vmount \
+            -p 80:80 \
+            ab-nginx:testing /bin/sh
     else
         # exec normally
         printf "${cyan}\nRunning NGINX on %s...${norm}\n" "$container_name"
-        docker run --rm -d --name ${container_name} --env-file ab-nginx.params -p 80:80 ab-nginx:testing
+        docker run --rm -d --name ${container_name} \
+        --env-file ab-nginx.params \
+        $vmount \
+        -p 80:80 \
+        ab-nginx:testing
     fi
 # run with TLS1.2
 elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
@@ -157,6 +177,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
         printf "${cyan}\nRunning SHELL on %s (TLS 1.2)...${norm}\n" "$container_name"
         docker run --rm -it --name ${container_name} \
             --env-file ab-nginx.params \
+            $vmount \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
@@ -168,6 +189,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
         printf "${cyan}\nRunning NGINX on %s (TLS 1.2)...${norm}\n" "$container_name"
         docker run --rm -d --name ${container_name} \
             --env-file ab-nginx.params \
+            $vmount \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
@@ -182,6 +204,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
         printf "${cyan}\nRunning SHELL on %s (TLS 1.3)...${norm}\n" "$container_name"
         docker run --rm -it --name ${container_name} \
             --env-file ab-nginx.params \
+            $vmount \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
@@ -192,6 +215,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
         printf "${cyan}\nRunning NGINX on %s (TLS 1.3)...${norm}\n" "$container_name"
         docker run --rm -d --name ${container_name} \
             --env-file ab-nginx.params \
+            $vmount \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
