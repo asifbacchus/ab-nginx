@@ -107,7 +107,7 @@ if [ "$WEBROOT_DIR" ] && [ ! -d "$WEBROOT_DIR" ]; then
     exit 4
 fi
 
-exit 99
+
 # process startup parameters
 while [ $# -gt 0 ]; do
     case "$1" in
