@@ -7,3 +7,5 @@
 - ONLY files that end with '.conf' will be processed!
     - if you want to keep a file for reference or disable it temporarily, 
         simply change the extension.  I like using '.conf.disabled'.
+- If you don't want to use this directory, you can bind-mount any other 
+  directory you want to '/etc/nginx/sites/'
