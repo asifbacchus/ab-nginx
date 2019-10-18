@@ -12,18 +12,18 @@ printf "done\n"
 
 # update access log global preference
 if [ "$ACCESS_LOG" = "OFF" ]; then
-    printf "Turning access log OFF..."
+    printf "Turning access log OFF... "
     sed -i -e "s%<ACCESS_LOG_SETTING>%OFF%" /etc/nginx/nginx.conf
     printf "done\n"
 elif [ "$ACCESS_LOG" = "ON" ]; then
-    printf "Turning access log ON..."
+    printf "Turning access log ON... "
     sed -i -e "s%<ACCESS_LOG_SETTING>%/var/log/nginx/access.log combined%" /etc/nginx/nginx.conf
     printf "done\n"
 fi
 
 # update HTTPS redirect port if SSL server test block exists
 if [ -f "/etc/nginx/sites/note" ]; then
-    printf "Updating port redirects...\n"
+    printf "Updating port redirects... "
     sed -i -e "s%<HTTPS_PORT>%${HTTPS_PORT}%" /etc/nginx/sites/05-test_secured.conf.disabled
     printf "done\n"
 fi
