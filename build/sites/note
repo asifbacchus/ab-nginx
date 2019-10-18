@@ -1,2 +1,2 @@
 This entire directory should be overwritten via bind-mount in a production
-environment
+environment unless you're serving simple static files from weboot.
