@@ -23,8 +23,9 @@ fi
 
 # update HTTPS redirect port if SSL server test block exists
 if [ -f "/etc/nginx/sites/note" ]; then
-    printf "\nUpdating port redirects...\n"
+    printf "Updating port redirects...\n"
     sed -i -e "s%<HTTPS_PORT>%${HTTPS_PORT}%" /etc/nginx/sites/05-test_secured.conf.disabled
+    printf "done\n"
 fi
 
 # activate HSTS
@@ -78,6 +79,7 @@ elif [ "$TLS13_ONLY" = TRUE ]; then
 fi
 
 # execute commands passed to this container
+printf "\nSetup complete...Container ready...\n"
 exec "$@"
 
 #EOF
