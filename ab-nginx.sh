@@ -185,6 +185,7 @@ if [ -z "$SSL_CERT" ]; then
         --env-file ab-nginx.params \
         $vmount \
         -p ${HTTP_PORT}:80 \
+        --restart unless-stopped \
         docker.asifbacchus.app/nginx/ab-nginx:latest
     fi
 # run with TLS1.2
@@ -212,6 +213,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
             -v "$DH":/certs/dhparam.pem:ro \
             -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
+            --restart unless-stopped \
             docker.asifbacchus.app/nginx/ab-nginx:latest
     fi
 # run with TLS1.3
@@ -237,6 +239,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
             -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
+            --restart unless-stopped \
             docker.asifbacchus.app/nginx/ab-nginx:latest
     fi
 fi
