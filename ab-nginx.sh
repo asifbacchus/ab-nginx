@@ -35,7 +35,8 @@ scriptHelp () {
     printf "'normally':  Run in detached mode with nginx automatically launched and\n"
     printf "logging to stdout.  If you specified certificates, nginx will serve over SSL\n"
     printf "by default.\n"
-    printf "Note: This container removes itself upon exit.\n\n"
+    printf "Note: Containers (except shell) are always set to restart 'unless-stopped'. You\n"
+    printf "must remove them manually if desired.\n\n"
     printf "${magenta}The script has the following parameters:\n"
     printf "${cyan}(parameter in cyan) ${yellow}(default in yellow)${norm}\n\n"
     printf "${cyan}-n|--name${norm}\n"
@@ -181,7 +182,7 @@ if [ -z "$SSL_CERT" ]; then
     else
         # exec normally
         printf "${cyan}\nRunning NGINX on %s...${norm}\n" "$container_name"
-        docker run --rm -d --name ${container_name} \
+        docker run -d --name ${container_name} \
         --env-file ab-nginx.params \
         $vmount \
         -p ${HTTP_PORT}:80 \
@@ -205,7 +206,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
     else
         # exec normally
         printf "${cyan}\nRunning NGINX on %s (TLS 1.2)...${norm}\n" "$container_name"
-        docker run --rm -d --name ${container_name} \
+        docker run -d --name ${container_name} \
             --env-file ab-nginx.params \
             $vmount \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
@@ -232,7 +233,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
     else
         # exec normally
         printf "${cyan}\nRunning NGINX on %s (TLS 1.3)...${norm}\n" "$container_name"
-        docker run --rm -d --name ${container_name} \
+        docker run -d --name ${container_name} \
             --env-file ab-nginx.params \
             $vmount \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
