@@ -1,5 +1,20 @@
 FROM nginx:mainline-alpine
 
+# default username and uid for nginx user
+ARG USER=www-docker
+ARG UID=8001
+
+# create nginx user
+RUN addgroup --gid ${UID} ${USER} \
+    && adduser \
+        --disabled-password \
+        --gecos 'nginx docker system user' \
+        --home '/usr/share/nginx/html' \
+        --ingroup ${USER} \
+        --no-create-home \
+        --uid ${UID} \
+        ${USER}
+
 # add fun error pages & LetsEncrypt challenge directory outside webroot
 RUN apk --no-cache add git \
     && cd /usr/share/nginx \
@@ -19,7 +34,7 @@ LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.url="https://git.asifbacchus.app/ab-docker/ab-nginx"
 LABEL org.label-schema.usage="https://git.asifbacchus.app/ab-docker/ab-nginx/wiki"
 LABEL org.label-schema.vcs-url="https://git.asifbacchus.app/ab-docker/ab-nginx.git"
-LABEL org.label-schema.version="1.05"
+LABEL org.label-schema.version="1.5"
 
 # copy configuration files
 COPY entrypoint.sh /entrypoint.sh
@@ -31,10 +46,10 @@ COPY webroot /usr/share/nginx/html/
 EXPOSE 80 443
 
 # clean-up permissions
-RUN chown -R nginx:nginx /usr/share/nginx/html \
+RUN chown -R ${USER}:${USER} /usr/share/nginx/html \
     && find /usr/share/nginx/html -type d -exec chmod 775 {} \; \
     && find /usr/share/nginx/html -type f -exec chmod 664 {} \; \
-    && chown -R nginx:nginx /etc/nginx \
+    && chown -R ${USER}:${USER} /etc/nginx \
     && find /etc/nginx -type d -exec chmod 770 {} \; \
     && find /etc/nginx -type f -exec chmod 660 {} \;
 
