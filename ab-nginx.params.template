@@ -19,7 +19,7 @@ TZ=Area/Location
 # Hostnames to which this instance of NGINX should answer:
 # By default, this is set to '_' meaning 'match anything'.  However, that won't 
 #   work if you're using SSL certificates! Multiple hostnames must be space 
-#   delimited.
+#   delimited and "enclosed in quotes".
 # This is NOT required if you are supplying your own server blocks via 
 #   'SERVERS_DIR'
 SERVER_NAMES="domain.tld www.domain.tld server.domain.tld alt.domain.tld"
@@ -60,7 +60,7 @@ CONFIG_DIR=$(pwd)/config/
 #   (i.e. 00-first_server.conf, 05-second_server.conf)
 # Only files with a ".conf" extension will be loaded!  If you want to disable a 
 #   file, simply change it's extension (i.e. '.conf.disabled').
-SERVERS_DIR=/home/user/server_blocks/
+SERVERS_DIR=$(pwd)/sites/
 
 # Specify a directory that contains files for your 'webroot'.  This includes 
 #   things like HTML, CSS, etc.
@@ -80,10 +80,10 @@ TLS13_ONLY=FALSE
 # Remember, if you are mounting symlinks (like when using Let's Encrypt), you 
 #   MUST specify the full path of the symlink so the target is resolved!
 # DH (Diffie-Hellman Parameters file) is only required if using TLS 1.2
-SSL_CERT=/path/to/your/ssl-certificate/fullchain.pem
-SSL_KEY=/path/to/your/ssl-private-key/privkey.pem
-SSL_CHAIN=/path/to/your/ssl-certificate-chain/chain.pem
-DH=/path/to/your/diffie-hellman-parameters-file/dhparam.pem
+#SSL_CERT=/path/to/your/ssl-certificate/fullchain.pem
+#SSL_KEY=/path/to/your/ssl-private-key/privkey.pem
+#SSL_CHAIN=/path/to/your/ssl-certificate-chain/chain.pem
+#DH=/path/to/your/diffie-hellman-parameters-file/dhparam.pem
 
 
 #EOF
