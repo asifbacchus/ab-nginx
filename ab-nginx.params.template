@@ -22,7 +22,7 @@ TZ=Area/Location
 #   delimited and "enclosed in quotes".
 # This is NOT required if you are supplying your own server blocks via 
 #   'SERVERS_DIR'
-SERVER_NAMES="domain.tld www.domain.tld server.domain.tld alt.domain.tld"
+HOSTNAMES="domain.tld www.domain.tld server.domain.tld alt.domain.tld"
 
 # Ports to expose on the HOST machine (container ALWAYS internally uses 80/443):
 # If you need to use ports other than HTTP=80 and HTTPS=443, remember to set up 

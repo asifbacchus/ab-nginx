@@ -176,6 +176,7 @@ if [ -z "$SSL_CERT" ]; then
         printf "${cyan}\nRunning SHELL on %s...${norm}\n" "$container_name"
         docker run --rm -it --name ${container_name} \
             --env-file ab-nginx.params \
+            -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
             -p ${HTTP_PORT}:80 \
             docker.asifbacchus.app/nginx/ab-nginx:latest /bin/sh
@@ -184,6 +185,7 @@ if [ -z "$SSL_CERT" ]; then
         printf "${cyan}\nRunning NGINX on %s...${norm}\n" "$container_name"
         docker run -d --name ${container_name} \
         --env-file ab-nginx.params \
+        -e SERVER_NAMES="$HOSTNAMES" \
         $vmount \
         -p ${HTTP_PORT}:80 \
         --restart unless-stopped \
@@ -196,6 +198,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
         printf "${cyan}\nRunning SHELL on %s (TLS 1.2)...${norm}\n" "$container_name"
         docker run --rm -it --name ${container_name} \
             --env-file ab-nginx.params \
+            -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
@@ -208,6 +211,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
         printf "${cyan}\nRunning NGINX on %s (TLS 1.2)...${norm}\n" "$container_name"
         docker run -d --name ${container_name} \
             --env-file ab-nginx.params \
+            -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
@@ -224,6 +228,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
         printf "${cyan}\nRunning SHELL on %s (TLS 1.3)...${norm}\n" "$container_name"
         docker run --rm -it --name ${container_name} \
             --env-file ab-nginx.params \
+            -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
@@ -235,6 +240,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
         printf "${cyan}\nRunning NGINX on %s (TLS 1.3)...${norm}\n" "$container_name"
         docker run -d --name ${container_name} \
             --env-file ab-nginx.params \
+            -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
