@@ -25,6 +25,23 @@ unset WEBROOT_DIR
 unset vmount
 
 
+### functions
+
+checkExist () {
+    if [ "$1" = "file" ]; then
+        if [ ! -f "$2" ]; then
+            printf "${err}\nCannot find file: '$2'. Exiting.\n${norm}"
+            exit 3
+        fi
+    elif [ "$1" = "dir" ]; then
+        if [ ! -d "$2" ]; then
+            printf "${err}\nCannot find directory: '$2'. Exiting.\n${norm}"
+            exit 3
+        fi
+    fi
+    return 0
+}
+
 scriptHelp () {
     printf "\n${magenta}%80s\n" | tr " " "-"
     printf "${norm}This is a simple helper script so you can avoid lengthy typing when working\n"
@@ -56,6 +73,7 @@ scriptHelp () {
     exit 0
 }
 
+
 ### pre-requisite checks
 
 # is user root or in the docker group?
@@ -67,57 +85,39 @@ if [ ! "$( id -u )" -eq 0 ]; then
 fi
 
 # does the params file exist?
-if [ ! -f "./ab-nginx.params" ]; then
-    printf "${err}\nCannot find 'ab-nginx.params' file in the same directory as this script. Exiting.\n${norm}"
-    exit 3
-fi
+checkExist 'file' './ab-nginx.params'
 
 # read .params file
 . ./ab-nginx.params
 
 # check for certs if using SSL
-if [ "$SSL_CERT" ]; then
-    if [ ! -f "$SSL_CERT" ]; then
-        printf "${err}\nCannot find specified SSL certificate file. Exiting.${norm}\n"
-        exit 5
-    fi
-    if [ ! -f "$SSL_KEY" ]; then
-        printf "${err}\nCannot find specified SSL private key file. Exiting.${norm}\n"
-        exit 5
-    fi
-    if [ ! -f "$SSL_CHAIN" ]; then
-        printf "${err}\nCannot find specified SSL certificate chain file. Exiting.${norm}\n"
-        exit 5
-    fi
-fi
+checkExist 'file' "$SSL_CERT"
+checkExist 'file' "$SSL_KEY"
+checkExist 'file' "$SSL_CHAIN"
 
 # check for DHparam if using TLS1.2
 if [ "$TLS13_ONLY" = FALSE ]; then
     if [ -z "$DH" ]; then
         printf "${err}\nA DHparam file must be specified when using TLS 1.2. Exiting.${norm}\n"
         exit 5
-    elif [ ! -f "$DH" ]; then
-        printf "${err}\nCannot find specified DHparam file. Exiting.${norm}\n"
-        exit 5
+    else
+        checkExist 'file' "$DH"
     fi
 fi
 
 # check if specified config directory exists
-if [ "$CONFIG_DIR" ] && [ ! -d "$CONFIG_DIR" ]; then
-    printf "${err}\nCannot find specified configuration file directory. Exiting.${norm}\n"
-    exit 4
+if [ "$CONFIG_DIR" ]; then
+    checkExist 'dir' "$CONFIG_DIR"
 fi
 
 # check if specified server-block directory exists
-if [ "$SERVERS_DIR" ] && [ ! -d "$SERVERS_DIR" ]; then
-    printf "${err}\nCannot find specified server-block file directory. Exiting.${norm}\n"
-    exit 4
+if [ "$SERVERS_DIR" ]; then
+    checkExist 'dir' "$SERVERS_DIR"
 fi
 
 # check if specified webroot directory exists
-if [ "$WEBROOT_DIR" ] && [ ! -d "$WEBROOT_DIR" ]; then
-    printf "${err}\nCannot find specified webroot directory. Exiting.${norm}\n"
-    exit 4
+if [ "$WEBROOT_DIR" ]; then
+    checkExist 'dir' "$WEBROOT_DIR"
 fi
 
 # set up volume mounts for config, servers, webroot
