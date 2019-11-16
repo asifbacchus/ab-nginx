@@ -4,6 +4,16 @@
 ### ab-nginx entrypoint script
 #
 
+convertCase () {
+    lc=$( echo "$1" | tr "[:lower:]" "[:upper:]")
+    return "$lc"
+}
+
+# convert environment variables to UPPERCASE for proper string comparison
+ACCESS_LOG=$(convertCase "$ACCESS_LOG")
+HSTS=$(convertCase "$HSTS")
+TLS13_ONLY=$(convertCase "$TLS13_ONLY")
+
 ### update configuration files with environment variables
 # update server name list
 printf "\nUpdating server name list... "
@@ -11,11 +21,11 @@ sed -i -e "s%<SERVER_NAMES>%${SERVER_NAMES}%" /etc/nginx/server_names.conf
 printf "done\n"
 
 # update access log global preference
-if [ "$ACCESS_LOG" = "OFF" ]; then
+if [ "$ACCESS_LOG" = 'OFF' ]; then
     printf "Turning access log OFF... "
     sed -i -e "s%<ACCESS_LOG_SETTING>%OFF%" /etc/nginx/nginx.conf
     printf "done\n"
-elif [ "$ACCESS_LOG" = "ON" ]; then
+elif [ "$ACCESS_LOG" = 'ON' ]; then
     printf "Turning access log ON... "
     sed -i -e "s%<ACCESS_LOG_SETTING>%/var/log/nginx/access.log combined%" /etc/nginx/nginx.conf
     printf "done\n"
@@ -29,7 +39,7 @@ if [ -f "/etc/nginx/sites/note" ]; then
 fi
 
 # activate HSTS
-if [ "$HSTS" = TRUE ]; then
+if [ "$HSTS" = 'TRUE' ]; then
     printf "Activating HSTS configuration... "
     sed -i -e "s/^#add_header/add_header/" \
         /etc/nginx/ssl-config/mozIntermediate_ssl.conf.disabled
@@ -39,7 +49,7 @@ if [ "$HSTS" = TRUE ]; then
 fi
 
 # activate SSL configuration as appropriate and only if certs exist
-if [ "$TLS13_ONLY" = FALSE ]; then
+if [ "$TLS13_ONLY" = 'FALSE' ]; then
     if [ -f "/certs/fullchain.pem" ] && \
         [ -f "/certs/privkey.pem" ] && \
         [ -f "/certs/chain.pem" ] && \
@@ -58,7 +68,7 @@ if [ "$TLS13_ONLY" = FALSE ]; then
                     /etc/nginx/sites/05-test_nonsecured.conf.disabled
             fi
     fi
-elif [ "$TLS13_ONLY" = TRUE ]; then
+elif [ "$TLS13_ONLY" = 'TRUE' ]; then
     if [ -f "/certs/fullchain.pem" ] && \
         [ -f "/certs/privkey.pem" ] && \
         [ -f "/certs/chain.pem" ]; then
