@@ -120,24 +120,19 @@ if [ "$WEBROOT_DIR" ]; then
     checkExist 'dir' "$WEBROOT_DIR"
 fi
 
-# set up volume mounts for config, servers, webroot
-if [ -z "$CONFIG_DIR" ] && [ -z "$WEBROOT_DIR" ] && [ -z "$SERVERS_DIR" ]; then
-    vmount=""
-elif [ "$CONFIG_DIR" ] && [ "$WEBROOT_DIR" ] && [ "$SERVERS_DIR" ]; then
-    vmount="-v $CONFIG_DIR:/etc/nginx/config/ -v $SERVERS_DIR:/etc/nginx/sites/ -v $WEBROOT_DIR:/usr/share/nginx/html/"
-elif [ "$CONFIG_DIR" ] && [ "$SERVERS_DIR" ]; then
-    vmount="-v $CONFIG_DIR:/etc/nginx/config/ -v $SERVERS_DIR:/etc/nginx/sites/"
-elif [ "$CONFIG_DIR" ] && [ "$WEBROOT_DIR" ]; then
-    vmount="-v $CONFIG_DIR:/etc/nginx/config/ -v $WEBROOT_DIR:/usr/share/nginx/html/"
-elif [ "$SERVERS_DIR" ] && [ "$WEBROOT_DIR" ]; then
-    vmount="-v $SERVERS_DIR:/etc/nginx/sites/ -v $WEBROOT_DIR:/usr/share/nginx/html/"
-elif [ "$CONFIG_DIR" ]; then
-    vmount="-v $CONFIG_DIR:/etc/nginx/config/"
-elif [ "$SERVERS_DIR" ]; then
-    vmount="-v $SERVERS_DIR:/etc/nginx/sites/"
-elif [ "$WEBROOT_DIR" ]; then
-    vmount="-v $WEBROOT_DIR:/usr/share/nginx/html/"
+# set up volume mounts
+if [ "$CONFIG_DIR" ]; then
+    vmount="$vmount -v $CONFIG_DIR:/etc/nginx/config"
 fi
+if [ "$SERVERS_DIR" ]; then
+    vmount="$vmount -v $SERVERS_DIR:/etc/nginx/sites"
+fi
+if [ "$WEBROOT_DIR" ]; then
+    vmount="$vmount -v $WEBROOT_DIR:/usr/share/nginx/html"
+fi
+# trim leading whitespace
+vmount=${vmount##[[:space:]]}
+echo "$vmount"
 
 
 # process startup parameters
