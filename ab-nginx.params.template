@@ -8,6 +8,19 @@
 #####
 
 
+### Network options
+# If you want to specify a network to which this container should bind or one 
+# that should be created, then use this variable. If you don't know what this 
+# means or if you just want to use the default, leave this line/variable 
+# commented-out.
+#NETWORK=nginx_network
+
+# If you want to specify a particular IP subnet for the network to be created 
+# as per the above variable, specify it here.  Again, if you don't know what 
+# this means, just leave this commented-out.
+#SUBNET='172.31.254.0/24'
+
+
 ### Timezone
 # This doesn't impact any functionality of the container, but it does make your 
 # logs easier to understand if they report the correct local time, right?

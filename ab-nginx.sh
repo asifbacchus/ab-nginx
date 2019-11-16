@@ -13,8 +13,10 @@ yellow=$(tput setaf 3)
 
 
 ### parameter defaults
-container_name="ab-nginx"
 shell=false
+container_name="ab-nginx"
+NETWORK='nginx_network'
+SUBNET='172.31.254.0/24'
 HTTP_PORT=80
 HTTPS_PORT=443
 unset CONFIG_DIR
@@ -168,6 +170,14 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+# create network if it doesn't already exist
+docker network inspect ${NETWORK} > /dev/null 2>&1 || \
+    docker network create \
+        --attachable \
+        --driver=bridge \
+        --subnet=${SUBNET} \
+        ${NETWORK}
+
 
 # run without TLS
 if [ -z "$SSL_CERT" ]; then    
@@ -178,6 +188,7 @@ if [ -z "$SSL_CERT" ]; then
             --env-file ab-nginx.params \
             -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
+            --network=${NETWORK} \
             -p ${HTTP_PORT}:80 \
             docker.asifbacchus.app/nginx/ab-nginx:latest /bin/sh
     else
@@ -187,6 +198,7 @@ if [ -z "$SSL_CERT" ]; then
         --env-file ab-nginx.params \
         -e SERVER_NAMES="$HOSTNAMES" \
         $vmount \
+        --network=${NETWORK} \
         -p ${HTTP_PORT}:80 \
         --restart unless-stopped \
         docker.asifbacchus.app/nginx/ab-nginx:latest
@@ -200,6 +212,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
             --env-file ab-nginx.params \
             -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
+            --network=${NETWORK} \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
@@ -213,6 +226,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
             --env-file ab-nginx.params \
             -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
+            --network=${NETWORK} \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
@@ -230,6 +244,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
             --env-file ab-nginx.params \
             -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
+            --network=${NETWORK} \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
@@ -242,6 +257,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
             --env-file ab-nginx.params \
             -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
+            --network=${NETWORK} \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
             -v "$SSL_CHAIN":/certs/chain.pem:ro \
