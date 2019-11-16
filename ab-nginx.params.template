@@ -1,8 +1,6 @@
 #####
 # Parameters for use by ab-nginx convenience script
 #
-# NOTE: 'TRUE', 'FALSE', 'ON' and 'OFF' MUST be in all CAPITALS!
-#
 # If you are not using the 'ab-nginx.sh' script file to start the container,
 # then you don't have to do anything with this file.
 #####
@@ -44,8 +42,8 @@ HOSTNAMES="domain.tld www.domain.tld server.domain.tld alt.domain.tld"
 #   automatically adjust for non-standard ports
 # If you want to use the defaults, either leave these lines as-is, comment them 
 #   out or just delete them.
-HTTP_PORT=80
-HTTPS_PORT=443
+#HTTP_PORT=80
+#HTTPS_PORT=443
 
 # Access logging (global preference):
 # Unless overridden in a server/location block, access logging will be handled 
@@ -77,7 +75,7 @@ SERVERS_DIR=$(pwd)/sites/
 
 # Specify a directory that contains files for your 'webroot'.  This includes 
 #   things like HTML, CSS, etc.
-WEBROOT_DIR=/home/user/my_web_stuff/
+WEBROOT_DIR=/var/www
 
 
 ### SSL options:
