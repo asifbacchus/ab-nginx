@@ -1,0 +1,4 @@
+- Place any configuration 'snippets' in this directory. You can then reference 
+  these files in your server configuration, etc.
+- This directory is a great place for supplemental SSL configuration if you 
+  have one site that uses different certificates, for example
