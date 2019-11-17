@@ -28,12 +28,12 @@ unset vmount
 ### functions
 
 checkExist () {
-    if [ "$1" = "file" ]; then
+    if [ "$1" = 'file' ]; then
         if [ ! -f "$2" ]; then
             printf "${err}\nCannot find file: '$2'. Exiting.\n${norm}"
             exit 3
         fi
-    elif [ "$1" = "dir" ]; then
+    elif [ "$1" = 'dir' ]; then
         if [ ! -d "$2" ]; then
             printf "${err}\nCannot find directory: '$2'. Exiting.\n${norm}"
             exit 3
@@ -96,7 +96,7 @@ checkExist 'file' "$SSL_KEY"
 checkExist 'file' "$SSL_CHAIN"
 
 # check for DHparam if using TLS1.2
-if [ "$TLS13_ONLY" = FALSE ]; then
+if [ "$TLS13_ONLY" = 'FALSE' ]; then
     if [ -z "$DH" ]; then
         printf "${err}\nA DHparam file must be specified when using TLS 1.2. Exiting.${norm}\n"
         exit 5
