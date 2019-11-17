@@ -10,9 +10,9 @@ convertCase () {
 }
 
 # convert environment variables to UPPERCASE for proper string comparison
-ACCESS_LOG=$(convertCase "$ACCESS_LOG")
-HSTS=$(convertCase "$HSTS")
-TLS13_ONLY=$(convertCase "$TLS13_ONLY")
+export ACCESS_LOG=$(convertCase "$ACCESS_LOG")
+export HSTS=$(convertCase "$HSTS")
+export TLS13_ONLY=$(convertCase "$TLS13_ONLY")
 
 ### update configuration files with environment variables
 # update server name list
