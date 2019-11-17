@@ -176,7 +176,7 @@ docker network inspect ${NETWORK} > /dev/null 2>&1 || \
 
 # run without TLS
 if [ -z "$SSL_CERT" ]; then    
-    if [ $shell = true ]; then
+    if [ $shell = 'true' ]; then
         # exec shell
         printf "${cyan}\nRunning SHELL on %s...${norm}\n" "$container_name"
         docker run --rm -it --name ${container_name} \
@@ -199,8 +199,8 @@ if [ -z "$SSL_CERT" ]; then
         docker.asifbacchus.app/nginx/ab-nginx:latest
     fi
 # run with TLS1.2
-elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
-    if [ $shell = true ]; then
+elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'FALSE' ]; then
+    if [ $shell = 'true' ]; then
         # exec shell
         printf "${cyan}\nRunning SHELL on %s (TLS 1.2)...${norm}\n" "$container_name"
         docker run --rm -it --name ${container_name} \
@@ -231,8 +231,8 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = FALSE ]; then
             docker.asifbacchus.app/nginx/ab-nginx:latest
     fi
 # run with TLS1.3
-elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = TRUE ]; then
-    if [ $shell = true ]; then
+elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'TRUE' ]; then
+    if [ $shell = 'true' ]; then
         # exec shell
         printf "${cyan}\nRunning SHELL on %s (TLS 1.3)...${norm}\n" "$container_name"
         docker run --rm -it --name ${container_name} \
