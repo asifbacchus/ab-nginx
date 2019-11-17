@@ -130,6 +130,9 @@ fi
 if [ "$SERVERS_DIR" ]; then
     vmount="$vmount -v $SERVERS_DIR:/etc/nginx/sites"
 fi
+if [ "$SNIPPETS_DIR" ]; then
+    vmount="$vmount -v $SNIPPETS_DIR:/etc/nginx/snippets"
+fi
 if [ "$WEBROOT_DIR" ]; then
     vmount="$vmount -v $WEBROOT_DIR:/usr/share/nginx/html"
 fi
