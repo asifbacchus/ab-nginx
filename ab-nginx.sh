@@ -23,9 +23,6 @@ unset CONFIG_DIR
 unset SERVERS_DIR
 unset WEBROOT_DIR
 unset vmount
-if [ "$TLS13_ONLY" ]; then
-    TLS13_ONLY=$( echo "$TLS13_ONLY" | tr "[:lower:]" "[:upper:]" )
-fi
 
 
 ### functions
@@ -143,7 +140,6 @@ if [ "$WEBROOT_DIR" ]; then
 fi
 # trim leading whitespace
 vmount=${vmount##[[:space:]]}
-echo "$vmount"
 
 
 # process startup parameters
