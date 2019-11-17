@@ -93,6 +93,11 @@ checkExist 'file' './ab-nginx.params'
 # read .params file
 . ./ab-nginx.params
 
+# fix case of TLS13_ONLY var
+if [ "$TLS13_ONLY" ]; then
+    TLS13_ONLY=$( echo "$TLS13_ONLY" | tr "[:lower:]" "[:upper:]" )
+fi
+
 # check for certs if using SSL
 checkExist 'file' "$SSL_CERT"
 checkExist 'file' "$SSL_KEY"
