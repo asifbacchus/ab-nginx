@@ -96,9 +96,9 @@ if [ "$TLS13_ONLY" ]; then
 fi
 
 # check for certs if using SSL
-checkExist 'file' "$SSL_CERT"
-checkExist 'file' "$SSL_KEY"
-checkExist 'file' "$SSL_CHAIN"
+if [ "$SSL_CERT" ]; then checkExist 'file' "$SSL_CERT"; fi
+if [ "$SSL_KEY" ]; then checkExist 'file' "$SSL_KEY"; fi
+if [ "$SSL_CHAIN" ]; then checkExist 'file' "$SSL_CHAIN"; fi
 
 # check for DHparam if using TLS1.2
 if [ "$TLS13_ONLY" = 'FALSE' ]; then
