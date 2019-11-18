@@ -23,7 +23,7 @@ printf "done\n"
 # update access log global preference
 if [ "$ACCESS_LOG" = 'OFF' ]; then
     printf "Turning access log OFF... "
-    sed -i -e "s%<ACCESS_LOG_SETTING>%OFF%" /etc/nginx/nginx.conf
+    sed -i -e "s%<ACCESS_LOG_SETTING>%off%" /etc/nginx/nginx.conf
     printf "done\n"
 elif [ "$ACCESS_LOG" = 'ON' ]; then
     printf "Turning access log ON... "
