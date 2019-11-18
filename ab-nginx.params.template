@@ -8,21 +8,21 @@
 
 ### Network options
 # If you want to specify a network to which this container should bind or one 
-# that should be created, then use this variable. If you don't know what this 
-# means or if you just want to use the default, leave this line/variable 
-# commented-out.
+#   that should be created, then use this variable. If you don't know what this 
+#   means or if you just want to use the default, leave this line/variable 
+#   commented-out.
 #NETWORK=nginx_network
 
 # If you want to specify a particular IP subnet for the network to be created 
-# as per the above variable, specify it here.  Again, if you don't know what 
-# this means, just leave this commented-out.
+#   as per the above variable, specify it here.  Again, if you don't know what 
+#   this means, just leave this commented-out.
 #SUBNET='172.31.254.0/24'
 
 
 ### Timezone
 # This doesn't impact any functionality of the container, but it does make your 
-# logs easier to understand if they report the correct local time, right?
-# (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+#   logs easier to understand if they report the correct local time, right?
+#   (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 TZ=Area/Location
 
 
@@ -47,8 +47,9 @@ HOSTNAMES="domain.tld www.domain.tld server.domain.tld alt.domain.tld"
 
 # Access logging (global preference):
 # Unless overridden in a server/location block, access logging will be handled 
-# according to this setting.  Default is OFF.  Choices are 'ON' or 'OFF'.  Logs 
-# will be printed to the console so they are accessible via 'docker logs ...'
+#   according to this setting.  Default is OFF.  Choices are 'ON' or 'OFF'.  
+#   Logs will be printed to the console so they are accessible via
+#   'docker logs ...'
 ACCESS_LOG=OFF
 
 ### Content files
@@ -60,7 +61,7 @@ ACCESS_LOG=OFF
 #   context.
 # Only files with a ".conf" extension will be loaded!  If you want to disable a 
 #   file, simply change it's extension (i.e. '.conf.disabled').
-CONFIG_DIR=$(pwd)/config/
+CONFIG_DIR=$(pwd)/config
 
 # Specify a directory containing your NGINX server-block configurations (if any)
 # If you are just serving static content from the 'webroot', you can use the 
@@ -71,7 +72,12 @@ CONFIG_DIR=$(pwd)/config/
 #   (i.e. 00-first_server.conf, 05-second_server.conf)
 # Only files with a ".conf" extension will be loaded!  If you want to disable a 
 #   file, simply change it's extension (i.e. '.conf.disabled').
-SERVERS_DIR=$(pwd)/sites/
+SERVERS_DIR=$(pwd)/sites
+
+# Specify a directory containing 'snippets' of NGINX code you want/need to 
+#   reference in various other configuration files. Pointers to additional SSL 
+#   certificates for other hosted domains is a good example of this.
+SNIPPETS_DIR=$(pwd)/snippets
 
 # Specify a directory that contains files for your 'webroot'.  This includes 
 #   things like HTML, CSS, etc.
