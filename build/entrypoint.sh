@@ -5,8 +5,7 @@
 #
 
 convertCase () {
-    lc=$( echo "$1" | tr "[:lower:]" "[:upper:]")
-    return "$lc"
+    printf "%s" "$1" | tr "[:lower:]" "[:upper:]"
 }
 
 # convert environment variables to UPPERCASE for proper string comparison
