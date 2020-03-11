@@ -34,7 +34,6 @@ LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.url="https://git.asifbacchus.app/ab-docker/ab-nginx"
 LABEL org.label-schema.usage="https://git.asifbacchus.app/ab-docker/ab-nginx/wiki"
 LABEL org.label-schema.vcs-url="https://git.asifbacchus.app/ab-docker/ab-nginx.git"
-LABEL org.label-schema.version="2.0"
 
 # copy configuration files
 COPY entrypoint.sh /entrypoint.sh
@@ -68,6 +67,7 @@ ENTRYPOINT [ "/entrypoint.sh" ]
 # run NGINX by default
 CMD [ "nginx", "-g", "daemon off;" ]
 
-# add build date label
+# add build date and version labels
 ARG BUILD_DATE
 LABEL org.label-schema.build-date=${BUILD_DATE}
+LABEL org.label-schema.version="2.1"
