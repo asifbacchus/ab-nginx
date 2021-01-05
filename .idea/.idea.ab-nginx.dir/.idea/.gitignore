@@ -1,0 +1,13 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/contentModel.xml
+/modules.xml
+/projectSettingsUpdater.xml
+/.idea.ab-nginx.iml
+# Datasource local storage ignored files
+/../../../../../../../../../:\Users\AsifB\Documents\RiderProjects\ab-nginx\.idea\.idea.ab-nginx.dir\.idea/dataSources/
+/dataSources.local.xml
+# Editor-based HTTP Client requests
+/httpRequests/
