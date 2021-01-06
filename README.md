@@ -1,11 +1,12 @@
 # ab-nginx
 
-Containerized fully-functional implementation of NGINX running on Alpine. The container is preconfigured to serve files and has common-sense settings out of the box. Also, it organizes configurations a little more intuitively than the default NGINX set up. Coupled with the [helper scripts](https://git.asifbacchus.app/ab-docker/ab-nginx/releases), certificates can be automatically installed, Let's Encrypt can be automated and swapping configurations and content to serve is as simple as changing a bind-mount.
+Containerized fully-functional implementation of NGINX running on Alpine. The container is by default a 'blank slate' that just serves files out of the box. Changing configuration, server blocks and content is accomplished with simple bind-mounts using a sensible, simple directory structure. Coupled with the [helper scripts](https://git.asifbacchus.app/ab-docker/ab-nginx/releases), certificates can be automatically configured with no user interaction required or easily set to work with Let's Encrypt.
 
 ## Contents
 
 - [Alternate repository](#alternate-repository)
 - [Documentation and scripts](#documentation-and-scripts)
+- [Directory layout](#directory-layout)
 - [Quick-start](#quick-start)
     - [Basic server](#basic-server)
     - [TLS](#TLS)
@@ -22,6 +23,29 @@ Throughout this document, I will reference the repository on DockerHub (`asifbac
 ## Documentation and scripts
 
 Check out the [repo wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki) for detailed examples and documentation about the container and the [helper scripts](https://git.asifbacchus.app/ab-docker/ab-nginx/releases) which are located [here](https://git.asifbacchus.app/ab-docker/ab-nginx/releases).
+
+## Directory layout
+
+You only need to be concerned with two directories. All content is in */usr/share/nginx/html* and all configuration is in */etc/nginx*. The content layout is obviously completely up to you. The configuration layout is as below:
+
+/etc/nginx
+├── config
+│   └── **add configuration files here or replace the whole directory**
+├── sites
+│   ├── 05-test_nonsecured.conf
+│   ├── 05-test_secured.conf.disabled
+│   └── **add additional server blocks files or replace whole directory**
+├── ssl-config
+│   ├── mozIntermediate_ssl.conf.disabled
+│   └── mozModern_ssl.conf.disabled
+	 └── *(SSL configuration – container auto-handles this)*
+├── errorpages.conf – *(pre-configured fun error pages, you can override )*
+├── health.conf – *(health-check endpoint, best to not touch this)*
+├── nginx.conf – **main NGINX configuration file, replace if desired**
+├── server_names.conf – *(list of hostnames, updated via environment variable)*
+├── ssl_certs.conf – *(container auto-manages this file too)*
+
+Locations in bold are designed to be overwritten via bind-mounts as desired to customize the container. For more details on all of these files and what they do, please refer to the [repo wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki).
 
 ## Quick-start
 
@@ -65,26 +89,24 @@ docker run -d --name nginx --restart unless-stopped \
   asifbacchus/ab-nginx:latest
 ```
 
-If you want to enforce HSTS, simply set the HSTS environment variable to true by adding `-e HSTS=TRUE` before specifying the container name. Careful about doing this while testing though! Also, certificates should always be mounted read-only (`:ro`) for security reasons!
+The container will load a secure configuration automatically and require SSL connections. If you want to enforce HSTS, simply set the HSTS environment variable to true by adding `-e HSTS=TRUE` before specifying the container name. Careful about doing this while testing though! Also, certificates should always be mounted read-only (`:ro`) for security reasons!
+
+If you want to integrate with Let's Encrypt, please refer to the [wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki).
 
 ### Custom configuration
 
-The container comes pre-configured with pretty general but useful settings for things like timeouts and buffers. Also, settings are split in separate files making overriding easier. If you want to override these with your own settings, simply bind-mount over the appropriate file or the entire config directory. You can also do the same with *nginx.conf* if you want.
+The container ships as a nearly blank-slate with only NGINX default configurations for everything except SSL which is designed to be automatically handled. The [helper scripts](https://git.asifbacchus.app/ab-docker/ab-nginx) auto-load a sensible fully preconfigured general server environment complete with reasonable settings for things like security headers, proxy settings, timeouts and buffers.
+
+Using your own settings is very simple too! Simple bind-mount your configuration files to */etc/nginx/config* and any files will be read into the configuration. If you want to override *nginx.conf*, just bind-mount on top of that at */etc/nginx/nginx.conf*.
 
 ```bash
-# replace the buffers configuration, for example
-docker run -d --name nginx --restart unless-stopped \
-  -v /myWebsite/content:/usr/share/nginx/html \
-  -v /myWebsite/myConfigs/buffers.conf:/etc/nginx/config/buffers.conf:ro \
-  asifbacchus/ab-nginx:latest
-
-# replace all default configurations
+# add custom configuration files via directory mounting
 docker run -d --name nginx --restart unless-stopped \
   -v /myWebsite/content:/usr/share/nginx/html \
   -v /myWebsite/myConfigs:/etc/nginx/config:ro \
   asifbacchus/ab-nginx:latest
 
-# replace nginx.conf and default configurations
+# replace nginx.conf and add custom configurations
 docker run -d --name nginx --restart unless-stopped \
   -v /myWebsite/content:/usr/share/nginx/html \
   -v /myWebsite/myConfigs:/etc/nginx/config:ro \
@@ -144,3 +166,4 @@ I think that's everything to get you going if you are already familiar with dock
 If I've forgotten anything, you find any bugs or you have suggestions, please file an issue either on my private [git server ](https://git.asifbachus.app/ab-docker/ab-nginx) or on [github](https://github.com/asifbacchus/ab-nginx). Also, I am *not* affiliated with NGINX in any way, so please **do not** bother them with any issues you find with this container. Bother me instead, I actually enjoy it!
 
 All the best and have fun!
+
