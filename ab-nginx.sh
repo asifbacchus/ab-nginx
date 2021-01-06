@@ -95,6 +95,12 @@ textblockParam() {
 
 ### pre-requisite checks
 
+# is docker installed?
+if ! command -v docker > /dev/null; then
+  printf "%s\nCannot find docker... is it installed?\n%s" "$err" "$norm"
+  exit 2
+fi
+
 # is user root or in the docker group?
 if [ ! "$(id -u)" -eq 0 ]; then
   if ! id -Gn | grep docker >/dev/null; then
