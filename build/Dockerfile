@@ -27,7 +27,7 @@ RUN apk --no-cache add git \
 
 # health check
 HEALTHCHECK --interval=60s --timeout=5s --start-period=30s --retries=3 \
-    CMD curl --fail http://127.0.0.1:9000 || exit 1
+    CMD curl --fail http://127.0.0.1:9000/nginx_status || exit 1
 
 # standardized labels
 LABEL author="Asif Bacchus <asif@bacchus.cloud>"
