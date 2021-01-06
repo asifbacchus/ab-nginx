@@ -8,3 +8,6 @@
 
 # don't track my testing params file
 ab-nginx.params
+
+# don't track checksums -- no point
+checksums.sha256
