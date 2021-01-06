@@ -106,7 +106,7 @@ if [ -f "/certs/fullchain.pem" ]; then
     fi
 else
     # ensure SSL configurations are disabled
-    mv /etc/nginx/ssl-config/*.conf /etc/nginx/ssl-config/*.conf.disabled
+    for f in /etc/nginx/ssl-config/*; do mv "$f" "${f%%.*}.conf.disabled"; done
     # if using default setup, ensure secure server block disabled
     if [ -f "/etc/nginx/sites/note" ]; then
         if [ -f "/etc/nginx/sites/05-test_secured.conf" ]; then
