@@ -38,7 +38,7 @@ fi
 # update HTTPS redirect port if SSL server test block exists
 if [ -f "/etc/nginx/sites/note" ]; then
     printf "Updating port redirects... "
-    sed -i -e "s%<HTTPS_PORT>%${HTTPS_PORT}%" /etc/nginx/sites/05-test_secured.conf.disabled
+    sed -i -e "s%<HTTPS_PORT>%${HTTPS_PORT}%" /etc/nginx/sites/05-test_secured.*
     printf "done\n"
 fi
 
