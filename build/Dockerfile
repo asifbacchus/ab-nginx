@@ -25,6 +25,10 @@ RUN apk --no-cache add git \
     && rm -rf /tmp/* \
     && rm -rf /tmp/.git*
 
+# health check
+HEALTHCHECK --interval=60s --timeout=5s --start-period=30s --retries=3 \
+    CMD curl --fail http://127.0.0.1:9000 || exit 1
+
 # standardized labels
 LABEL maintainer="Asif Bacchus <asif@bacchus.cloud>"
 LABEL org.label-schema.cmd="docker run -d --rm --name ab-nginx [--env-file ab-nginx.params] [-v /my_certs:/certs] [-v /my_nginx_config_files:/etc/nginx/config] [-v /my_nginx_server_blocks:/etc/nginx/sites] [-v /my_html_stuff:/usr/share/nginx/html] docker.asifbacchus.app/nginx/ab-nginx"
