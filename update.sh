@@ -68,7 +68,7 @@ updateSuccess=0
 dockerNamespace='nginx'
 containerName='ab-nginx'
 containerUpdatePath="docker.asifbacchus.app/$dockerNamespace/$containerName:latest"
-server="https://updates.asifbacchus.app/docker/$dockerNamespace/$containerName/"
+server="https://asifbacchus.app/updates/docker/$dockerNamespace/$containerName/"
 checksumFilename='checksums.sha256'
 
 # files to update
