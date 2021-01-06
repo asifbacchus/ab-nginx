@@ -30,14 +30,15 @@ HEALTHCHECK --interval=60s --timeout=5s --start-period=30s --retries=3 \
     CMD curl --fail http://127.0.0.1:9000 || exit 1
 
 # standardized labels
+LABEL author="Asif Bacchus <asif@bacchus.cloud>"
 LABEL maintainer="Asif Bacchus <asif@bacchus.cloud>"
-LABEL org.label-schema.cmd="docker run -d --rm --name ab-nginx [--env-file ab-nginx.params] [-v /my_certs:/certs] [-v /my_nginx_config_files:/etc/nginx/config] [-v /my_nginx_server_blocks:/etc/nginx/sites] [-v /my_html_stuff:/usr/share/nginx/html] docker.asifbacchus.app/nginx/ab-nginx"
-LABEL org.label-schema.description="NGINX-mainline-alpine with more logical file location layout and automatic SSL set up if certificates are provided."
-LABEL org.label-schema.name="ab-nginx"
-LABEL org.label-schema.schema-version="1.0"
-LABEL org.label-schema.url="https://git.asifbacchus.app/ab-docker/ab-nginx"
-LABEL org.label-schema.usage="https://git.asifbacchus.app/ab-docker/ab-nginx/wiki"
-LABEL org.label-schema.vcs-url="https://git.asifbacchus.app/ab-docker/ab-nginx.git"
+LABEL org.opencontainers.image.author="Asif Bacchus <asif@bacchus.cloud>"
+LABEL org.opencontainers.image.url="https://git.asifbacchus.app/ab-docker/ab-nginx"
+LABEL org.opencontainers.image.documentation="https://git.asifbacchus.app/ab-docker/ab-nginx/wiki"
+LABEL org.opencontainers.image.source="https://git.asifbacchus.app/ab-docker/ab-nginx.git"
+LABEL org.opencontainers.image.vendor="NGINX"
+LABEL org.opencontainers.image.title="ab-nginx"
+LABEL org.opencontainers.image.description="NGINX-mainline-alpine with more logical file location layout and automatic SSL set up if certificates are provided."
 
 # copy configuration files
 COPY entrypoint.sh /entrypoint.sh
@@ -73,6 +74,8 @@ CMD [ "nginx", "-g", "daemon off;" ]
 
 # add build date and version labels
 ARG BUILD_DATE
-LABEL org.label-schema.build-date=${BUILD_DATE}
+LABEL org.opencontainers.image.version="1.19.6"
 LABEL app.asifbacchus.docker.internalVersion="3.0"
-LABEL org.label-schema.version="1.19.6"
+LABEL org.opencontainers.image.created=${BUILD_DATE}
+
+#EOF
