@@ -5,11 +5,21 @@
 #
 
 # text formatting presets
-cyan=$(tput setaf 6)
-err=$(tput bold)$(tput setaf 1)
-magenta=$(tput setaf 5)
-norm=$(tput sgr0)
-yellow=$(tput setaf 3)
+if command -v tput > /dev/null; then
+  cyan=$(tput bold)$(tput setaf 6)
+  err=$(tput bold)$(tput setaf 1)
+  magenta=$(tput sgr0)$(tput setaf 5)
+  norm=$(tput sgr0)
+  yellow=$(tput sgr0)$(tput setaf 3)
+  width=$(tput cols)
+else
+  cyan=''
+  err=''
+  magenta=''
+  norm=''
+  yellow=''
+  width=80
+fi
 
 
 ### parameter defaults
@@ -43,34 +53,46 @@ checkExist () {
 }
 
 scriptHelp () {
-    printf "\n${magenta}%80s\n" | tr " " "-"
-    printf "${norm}This is a simple helper script so you can avoid lengthy typing when working\n"
-    printf "with the nginx container.  The script reads the contents of 'ab-nginx.params'\n"
-    printf "and constructs various 'docker run' commands based on that file.  The biggest\n"
-    printf "timesaver is working with certificates.  If they are specified in params file,\n"
-    printf "the script will automatically bind-mount them so nginx serves content via SSL\n"
-    printf "by default.\n\n"
-    printf "If you run the script with no parameters, it will execute the container\n"
-    printf "'normally':  Run in detached mode with nginx automatically launched and\n"
-    printf "logging to stdout.  If you specified certificates, nginx will serve over SSL\n"
-    printf "by default.\n"
-    printf "Note: Containers (except shell) are always set to restart 'unless-stopped'. You\n"
-    printf "must remove them manually if desired.\n\n"
-    printf "${magenta}The script has the following parameters:\n"
-    printf "${cyan}(parameter in cyan) ${yellow}(default in yellow)${norm}\n\n"
-    printf "${cyan}-n|--name${norm}\n"
-    printf "Change the name of the container. This is cosmetic and does not affect\n"
-    printf "operation in any way.\n"
-    printf "${yellow}(ab-nginx)${norm}\n\n"
-    printf "${cyan}-s|--shell${norm}\n"
-    printf "Enter the container using an interactive POSIX shell.  This happens after\n"
-    printf "startup operations but *before* nginx is actually started.  This is a great way\n"
-    printf "to see configuration changes possibly stopping nginx from starting normally.\n"
-    printf "${yellow}(off: run in detached mode)${norm}\n\n"
-    printf "${yellow}More information can be found at:\n"
-    printf "https://git.asifbacchus.app/ab-docker/ab-nginx/wiki\n"
-    printf "${magenta}%80s\n\n" | tr " " "-"
+    printf "\n%s%1000s\n" "$magenta" | tr " " "-" | cut -c -$width
+    printf "%s" "$norm"
+    textblock "This is a simple helper script so you can avoid lengthy typing when working with the nginx container. The script reads the contents of 'ab-nginx.params' and constructs various 'docker run' commands based on that file. The biggest time-saver is working with certificates. If they are specified in the params file, the script will automatically bind-mount them so nginx serves content via SSL by default."
+    newline
+    textblock "If you run the script with no parameters, it will execute the container 'normally': Run in detached mode with nginx automatically launched and logging to stdout.  If you specified certificates, nginx will serve over SSL by default."
+    newline
+    textblock "Note: Containers (except shell) are always set to restart 'unless-stopped'. You must remove them manually if desired."
+    printf "%s" "$magenta"
+    newline
+    textblock "The script has the following parameters:"
+    textblockParam 'parameter in cyan' 'default in yellow'
+    newline
+    textblockParam '-n|--name' 'ab-nginx'
+    textblock "Change the name of the container. This is cosmetic and does not affect operation in any way."
+    newline
+    textblockParam '-s|--shell' 'off: run in detached mode'
+    textblock "Enter the container using an interactive POSIX shell. This happens after startup operations but *before* nginx is actually started. This is a great way to see configuration changes possibly stopping nginx from starting normally."
+    printf "%s" "$yellow"
+    newline
+    textblock "More information can be found at: https://git.asifbacchus.app/ab-docker/ab-nginx/wiki"
+    printf "%s%1000s\n" "$magenta" | tr " " "-" | cut -c -$width
     exit 0
+}
+
+newline () {
+  printf "\n"
+}
+
+textblock () {
+  printf "%s\n" "$1" | fold -w "$width" -s
+}
+
+textblockParam() {
+  if [ -z "$2" ]; then
+    # no default
+    printf "%s%s%s\n" "$cyan" "$1" "$norm"
+  else
+    # default param provided
+    printf "%s%s %s(%s)%s\n" "$cyan" "$1" "$yellow" "$2" "$norm"
+  fi
 }
 
 
