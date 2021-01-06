@@ -74,4 +74,5 @@ CMD [ "nginx", "-g", "daemon off;" ]
 # add build date and version labels
 ARG BUILD_DATE
 LABEL org.label-schema.build-date=${BUILD_DATE}
-LABEL org.label-schema.version="2.1"
+LABEL app.asifbacchus.docker.internalVersion="3.0"
+LABEL org.label-schema.version="1.19.6"
