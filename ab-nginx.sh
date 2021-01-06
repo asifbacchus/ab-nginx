@@ -120,7 +120,7 @@ if [ "$SSL_KEY" ]; then checkExist 'file' "$SSL_KEY"; fi
 if [ "$SSL_CHAIN" ]; then checkExist 'file' "$SSL_CHAIN"; fi
 
 # check for DHparam if using TLS1.2
-if [ "$TLS13_ONLY" = 'FALSE' ]; then
+if [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'FALSE' ]; then
   if [ -z "$DH" ]; then
     printf "%s\nA DHparam file must be specified when using TLS 1.2. Exiting.%s\n" "$err" "$norm"
     exit 5
