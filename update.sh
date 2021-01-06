@@ -126,51 +126,55 @@ else
       printf "\n%s*** This script has been updated. Please re-run it to load the updated version of this file. ***%s\n\n" "$warn" "$norm"
       # overwrite this script with updated script
       mv -f ./update.sh.tmp "$localScriptName"
-      exit 0
     fi
   fi
 fi
 
 ## update files
-set -- dummy $updateFiles
-shift
-for file; do
-  updateTarget="$file"
-  printf "\nChecking '%s' for updates... " "$updateTarget"
-  repoFile=$(grep "$updateTarget" "$checksumFilename" | grep -o '^\S*')
-  if [ -f "$file" ]; then
-    localFile=$(sha256sum "$updateTarget" | grep -o '^\S*')
+while IFS='  ' read -r field1 field2; do
+  printf "\nChecking '%s' for updates... " "$field2"
+  updateFilename="$field2"
+  repoFileChecksum="$field1"
+  if [ -f "$updateFilename" ]; then
+      localFileChecksum=$(sha256sum "$updateFilename" | grep -o '^\S*')
   else
-    localFile=0
+      localFileChecksum=0
   fi
 
-  if ! [ "$localFile" = "$repoFile" ]; then
+  # update file if necessary
+  if ! [ "$localFileChecksum" = "$repoFileChecksum" ]; then
     printf "[AVAILABLE]\n"
     updatesAvailable=$((updatesAvailable + 1))
     # download update
-    printf "Downloading updated '%s'... " "$updateTarget"
-    # specify a name here so that wget overwrites the file instead of just appending a number
-    if ! wget --quiet --tries=3 --timeout=10 -O "$updateTarget" "${server}${updateTarget}"; then
+    printf "Downloading updated '%s'... " "$updateFilename"
+    if ! wget --quiet --tries=3 --timeout=10 -O "$updateFilename.tmp" "${server}${updateFilename}"; then
       errNotify
       downloadFailed=$((downloadFailed + 1))
+      # delete failed download file as necessary
+      rm -f "$updateFilename.tmp" 2>&1
     else
       okNotify
       downloadSuccess=$((downloadSuccess + 1))
       # verify download
-      printf "Verifying '%s'... " "$updateTarget"
-      localFile=$(sha256sum "$updateTarget" | grep -o '^\S*')
-      if ! [ "$localFile" = "$repoFile" ]; then
+      printf "Verifying '%s'... " "$updateFilename"
+      localFileChecksum=$(sha256sum "$updateFilename.tmp" | grep -o '^\S*')
+      if ! [ "$localFileChecksum" = "$repoFileChecksum" ]; then
         errNotify
         updateFailed=$((updateFailed + 1))
+        # delete corrupted download file as necessary
+        rm -f "$updateFilename.tmp" 2>&1
       else
         okNotify
         updateSuccess=$((updateSuccess + 1))
+        # overwrite old version of file
+        mv -f "$updateFilename.tmp" "$updateFilename"
       fi
     fi
   else
     printf "[NONE]\n"
   fi
-done
+done <"$checksumFilename"
+
 
 ### display results
 printf "\n%sResults:%s\n" "$info" "$norm"
