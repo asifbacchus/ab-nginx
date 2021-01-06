@@ -81,17 +81,21 @@ Once those files are available, you can run the container as follows:
 docker run -d --name nginx --restart unless-stopped \
   -v /myWebsite/content:/usr/share/nginx/html \
   -v /myCerts:/certs:ro \
+  -e SERVER_NAMES="domain.tld www.domain.tld" \
   asifbacchus/ab-nginx:latest
 
 # TLS 1.3 only mode (requires fullchain.pem, privkey.pem, chain.pem)
 docker run -d --name nginx --restart unless-stopped \
   -v /myWebsite/content:/usr/share/nginx/html \
   -v /myCerts:/certs:ro \
+  -e SERVER_NAMES="domain.tld www.domain.tld" \
   -e TLS13_ONLY=TRUE
   asifbacchus/ab-nginx:latest
 ```
 
 The container will load a secure configuration automatically and require SSL connections. If you want to enforce HSTS, simply set the HSTS environment variable to true by adding `-e HSTS=TRUE` before specifying the container name. Careful about doing this while testing though! Also, certificates should always be mounted read-only (`:ro`) for security reasons!
+
+You may have noticed I also specified the `SERVER_NAMES` variable. This is necessary or SSL will not work since the hostname the server responds to must match the certificate being presented. **Make sure you set this environment variable to match your certificates!**
 
 If you want to integrate with Let's Encrypt, please refer to the [wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki).
 
@@ -136,7 +140,7 @@ Remember that NGINX processes files in order, so you might want to number your c
 Running the container in shell mode as a great way to verify configurations or just to see what the defaults are. This will apply all configurations but will *not* actually start NGINX. This lets you browse all mounted locations, make sure everything is where you want it, etc.
 
 ```bash
-docker run -d --name nginx --restart unless-stopped \
+docker run -it --rm \
   -v /myWebsite/content:/usr/share/nginx/html \
   -v /myWebsite/myConfigs:/etc/nginx/config:ro \
   -v /myWebsite/serverBlocks:/etc/nginx/sites:ro \
