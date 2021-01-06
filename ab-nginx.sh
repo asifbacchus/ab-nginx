@@ -206,7 +206,7 @@ if [ -z "$SSL_CERT" ]; then
     docker run --rm -it --name "${container_name}" \
       --env-file ab-nginx.params \
       -e SERVER_NAMES="$HOSTNAMES" \
-      "${vmount}" \
+      $vmount \
       --network=${NETWORK} \
       -p ${HTTP_PORT}:80 \
       docker.asifbacchus.app/nginx/ab-nginx:latest /bin/sh
@@ -216,7 +216,7 @@ if [ -z "$SSL_CERT" ]; then
     docker run -d --name "${container_name}" \
       --env-file ab-nginx.params \
       -e SERVER_NAMES="$HOSTNAMES" \
-      "${vmount}" \
+      $vmount \
       --network=${NETWORK} \
       -p ${HTTP_PORT}:80 \
       --restart unless-stopped \
@@ -230,7 +230,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'FALSE' ]; then
     docker run --rm -it --name "${container_name}" \
       --env-file ab-nginx.params \
       -e SERVER_NAMES="$HOSTNAMES" \
-      "${vmount}" \
+      $vmount \
       --network=${NETWORK} \
       -v "$SSL_CERT":/certs/fullchain.pem:ro \
       -v "$SSL_KEY":/certs/privkey.pem:ro \
@@ -244,7 +244,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'FALSE' ]; then
     docker run -d --name "${container_name}" \
       --env-file ab-nginx.params \
       -e SERVER_NAMES="$HOSTNAMES" \
-      "${vmount}" \
+      $vmount \
       --network=${NETWORK} \
       -v "$SSL_CERT":/certs/fullchain.pem:ro \
       -v "$SSL_KEY":/certs/privkey.pem:ro \
@@ -262,7 +262,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'TRUE' ]; then
     docker run --rm -it --name "${container_name}" \
       --env-file ab-nginx.params \
       -e SERVER_NAMES="$HOSTNAMES" \
-      "${vmount}" \
+      $vmount \
       --network=${NETWORK} \
       -v "$SSL_CERT":/certs/fullchain.pem:ro \
       -v "$SSL_KEY":/certs/privkey.pem:ro \
@@ -275,7 +275,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'TRUE' ]; then
     docker run -d --name "${container_name}" \
       --env-file ab-nginx.params \
       -e SERVER_NAMES="$HOSTNAMES" \
-      "${vmount}" \
+      $vmount \
       --network=${NETWORK} \
       -v "$SSL_CERT":/certs/fullchain.pem:ro \
       -v "$SSL_KEY":/certs/privkey.pem:ro \
