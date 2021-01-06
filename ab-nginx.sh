@@ -160,6 +160,9 @@ fi
 # trim leading whitespace
 vmount=${vmount##[[:space:]]}
 
+# handle null HOSTNAMES
+if [ -z "$HOSTNAMES" ]; then HOSTNAMES="_"; fi
+
 # process startup parameters
 while [ $# -gt 0 ]; do
   case "$1" in
