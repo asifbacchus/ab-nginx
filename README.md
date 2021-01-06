@@ -130,7 +130,7 @@ You can set several options simply by passing environment variables. They are pr
 | name         | description                                                  | default                     |
 | ------------ | ------------------------------------------------------------ | --------------------------- |
 | TZ           | Set the container time zone for proper logging.              | Etc/UTC                     |
-| SERVER_NAMES | Comma-delimited list of hostnames/FQDNs to which NGINX should respond. This can be overridden via individual server blocks. | "_" (this means "anything") |
+| SERVER_NAMES | Space-delimited list of hostnames/FQDNs to which NGINX should respond. This can be overridden via individual server blocks. Must be "enclosed in quotes". | "_" (this means "anything") |
 | HTTP_PORT    | Port on which HTTP connections should be accepted. If you set this, make sure you set your port mapping properly! For example, if you set this to 8080 then you need to specify `-p 8080:8080` or something like `-p 12.34.567.89:8080:8080`. | 80                          |
 | HTTPS_PORT   | Port on which HTTPS connections should be accepted. If you set this, make sure you set your port mapping properly! For example, if you set this to 8443 then you need to specify `-p 8443:8443` or something like `-p 12.34.567.89:8443:8443`. | 443                         |
 | ACCESS_LOG   | Turn on/off access logging. There is a default format specified in the container's *nginx.conf*, but you can override this via configuration files. | off                         |
