@@ -74,7 +74,6 @@ checksumFilename='checksums.sha256'
 # files to update
 localScriptName="$(basename "$0")"
 repoScriptName='update.sh'
-updateFiles=""
 
 ### update container
 printf "%s\n*** Updating %s container and service scripts ***\n\n%s" "$info" "$containerName" "$norm"
