@@ -28,6 +28,7 @@ Check out the [repo wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki) f
 
 You only need to be concerned with two directories. All content is in */usr/share/nginx/html* and all configuration is in */etc/nginx*. The content layout is obviously completely up to you. The configuration layout is as below:
 
+```text
 /etc/nginx
 ├── config
 │   └── **add configuration files here or replace the whole directory**
@@ -38,14 +39,15 @@ You only need to be concerned with two directories. All content is in */usr/shar
 ├── ssl-config
 │   ├── mozIntermediate_ssl.conf.disabled
 │   └── mozModern_ssl.conf.disabled
-	 └── *(SSL configuration – container auto-handles this)*
-├── errorpages.conf – *(pre-configured fun error pages, you can override )*
-├── health.conf – *(health-check endpoint, best to not touch this)*
+	 └── (SSL configuration – container auto-handles this)
+├── errorpages.conf – (pre-configured fun error pages, you can override )
+├── health.conf – (health-check endpoint, best to not touch this)
 ├── nginx.conf – **main NGINX configuration file, replace if desired**
-├── server_names.conf – *(list of hostnames, updated via environment variable)*
-├── ssl_certs.conf – *(container auto-manages this file too)*
+├── server_names.conf – (list of hostnames, updated via environment variable)
+├── ssl_certs.conf – (container auto-manages this file too)
+```
 
-Locations in bold are designed to be overwritten via bind-mounts as desired to customize the container. For more details on all of these files and what they do, please refer to the [repo wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki).
+Locations with \**starred descriptions** are designed to be overwritten via bind-mounts to customize the container. For more details on all of these files and what they do, please refer to the [repo wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki).
 
 ## Quick-start
 
