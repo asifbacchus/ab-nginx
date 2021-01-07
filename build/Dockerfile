@@ -1,19 +1,18 @@
 FROM nginx:mainline-alpine
 
 # default username and uid for nginx user
-ARG USER=www-docker
 ARG UID=8001
 
 # create nginx user
-RUN addgroup --gid ${UID} ${USER} \
+RUN addgroup --gid ${UID} www-docker \
     && adduser \
         --disabled-password \
         --gecos 'nginx docker system user' \
         --home '/usr/share/nginx/html' \
-        --ingroup ${USER} \
+        --ingroup www-docker \
         --no-create-home \
         --uid ${UID} \
-        ${USER}
+        www-docker
 
 # add nano, fun error pages & LetsEncrypt challenge directory outside webroot
 RUN apk --no-cache add nano \
@@ -49,13 +48,14 @@ COPY webroot /usr/share/nginx/html/
 # expose ports
 EXPOSE 80 443
 
-# clean-up permissions
+# clean-up permissions and run as nginx user
 RUN chown -R ${USER}:${USER} /usr/share/nginx/html \
     && find /usr/share/nginx/html -type d -exec chmod 775 {} \; \
     && find /usr/share/nginx/html -type f -exec chmod 664 {} \; \
     && chown -R ${USER}:${USER} /etc/nginx \
     && find /etc/nginx -type d -exec chmod 770 {} \; \
     && find /etc/nginx -type f -exec chmod 660 {} \;
+USER www-docker
 
 # default environment variables
 ENV TZ=Etc/UTC
@@ -75,7 +75,7 @@ CMD [ "nginx", "-g", "daemon off;" ]
 # add build date and version labels
 ARG BUILD_DATE
 LABEL org.opencontainers.image.version="1.19.6"
-LABEL app.asifbacchus.docker.internalVersion="3.0"
+LABEL app.asifbacchus.docker.internalVersion="3.1"
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 
 #EOF
