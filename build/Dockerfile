@@ -6,11 +6,11 @@ ARG UID=8001
 # create nginx user
 RUN addgroup --gid ${UID} www-docker \
     && adduser \
+        -S \
+        -h /home/www-docker \
+        -G www-docker \
         --disabled-password \
         --gecos 'nginx docker system user' \
-        --home '/usr/share/nginx/html' \
-        --ingroup www-docker \
-        --no-create-home \
         --uid ${UID} \
         www-docker
 
@@ -59,6 +59,7 @@ RUN chown -R www-docker:www-docker /usr/share/nginx \
     && chown www-docker:www-docker /var/cache/nginx \
     && chown www-docker:www-docker /var/log/nginx
 USER www-docker
+WORKDIR /usr/share/nginx/html
 
 # default environment variables
 ENV TZ=Etc/UTC
