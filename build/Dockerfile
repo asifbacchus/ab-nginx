@@ -48,7 +48,7 @@ COPY webroot /usr/share/nginx/html/
 # expose ports
 EXPOSE 80 443
 
-# clean-up permissions and run as nginx user
+# clean-up permissions and run as www-docker user
 RUN chown -R ${USER}:${USER} /usr/share/nginx/html \
     && find /usr/share/nginx/html -type d -exec chmod 775 {} \; \
     && find /usr/share/nginx/html -type f -exec chmod 664 {} \; \
