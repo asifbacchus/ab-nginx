@@ -38,7 +38,7 @@ fi
 # update HTTPS redirect port if SSL server test block exists
 if [ -f "/etc/nginx/sites/note" ]; then
     printf "Updating port redirects... "
-    sed -i -e "s%<HTTPS_PORT>%${HTTPS_PORT}%" /etc/nginx/sites/05-test_secured.*
+    sed -i -e "s%<HTTPS_PORT>%${HTTPS_PORT}%" /etc/nginx/sites/05-secured.*
     printf "done\n"
 fi
 
@@ -68,13 +68,13 @@ if [ -f "/certs/fullchain.pem" ]; then
 
             # if using default setup, activate secured server block
             if [ -f "/etc/nginx/sites/note" ]; then
-                if [ -f "/etc/nginx/sites/05-test_secured.conf.disabled" ]; then
-                    mv /etc/nginx/sites/05-test_secured.conf.disabled \
-                      /etc/nginx/sites/05-test_secured.conf
+                if [ -f "/etc/nginx/sites/05-secured.conf.disabled" ]; then
+                    mv /etc/nginx/sites/05-secured.conf.disabled \
+                      /etc/nginx/sites/05-secured.conf
                 fi
-                if [ -f "/etc/nginx/sites/05-test_nonsecured.conf" ]; then
-                    mv /etc/nginx/sites/05-test_nonsecured.conf \
-                      /etc/nginx/sites/05-test_nonsecured.conf.disabled
+                if [ -f "/etc/nginx/sites/05-nonsecured.conf" ]; then
+                    mv /etc/nginx/sites/05-nonsecured.conf \
+                      /etc/nginx/sites/05-nonsecured.conf.disabled
                 fi
             fi
         fi
@@ -93,13 +93,13 @@ if [ -f "/certs/fullchain.pem" ]; then
 
             # if using default setup, activate secure server block
             if [ -f "/etc/nginx/sites/note" ]; then
-                if [ -f "/etc/nginx/sites/05-test_secured.conf.disabled" ]; then
-                    mv /etc/nginx/sites/05-test_secured.conf.disabled \
-                      /etc/nginx/sites/05-test_secured.conf
+                if [ -f "/etc/nginx/sites/05-secured.conf.disabled" ]; then
+                    mv /etc/nginx/sites/05-secured.conf.disabled \
+                      /etc/nginx/sites/05-secured.conf
                 fi
-                if [ -f "/etc/nginx/sites/05-test_nonsecured.conf" ]; then
-                    mv /etc/nginx/sites/05-test_nonsecured.conf \
-                      /etc/nginx/sites/05-test_nonsecured.conf.disabled
+                if [ -f "/etc/nginx/sites/05-nonsecured.conf" ]; then
+                    mv /etc/nginx/sites/05-nonsecured.conf \
+                      /etc/nginx/sites/05-nonsecured.conf.disabled
                 fi
             fi
         fi
@@ -109,11 +109,11 @@ else
     for f in /etc/nginx/ssl-config/*; do mv "$f" "${f%%.*}.conf.disabled"; done
     # if using default setup, ensure secure server block disabled
     if [ -f "/etc/nginx/sites/note" ]; then
-        if [ -f "/etc/nginx/sites/05-test_secured.conf" ]; then
-            mv /etc/nginx/sites/05-test_secured.conf /etc/nginx/sites/05-test_secured.conf.disabled
+        if [ -f "/etc/nginx/sites/05-secured.conf" ]; then
+            mv /etc/nginx/sites/05-secured.conf /etc/nginx/sites/05-secured.conf.disabled
         fi
-        if [ -f "/etc/nginx/sites/05-test_nonsecured.conf.disabled" ]; then
-            mv /etc/nginx/sites/05-test_nonsecured.conf.disabled /etc/nginx/sites/05-test_nonsecured.conf
+        if [ -f "/etc/nginx/sites/05-nonsecured.conf.disabled" ]; then
+            mv /etc/nginx/sites/05-nonsecured.conf.disabled /etc/nginx/sites/05-nonsecured.conf
         fi
     fi
 fi
