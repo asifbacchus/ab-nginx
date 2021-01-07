@@ -10,8 +10,8 @@
 
 # Documents
 *.bibtex   text diff=bibtex
-*.doc	        diff=astextplain
-*.DOC	        diff=astextplain
+*.doc           diff=astextplain
+*.DOC           diff=astextplain
 *.docx          diff=astextplain
 *.DOCX          diff=astextplain
 *.dot           diff=astextplain
@@ -19,8 +19,8 @@
 *.pdf           diff=astextplain
 *.PDF           diff=astextplain
 *.rtf           diff=astextplain
-*.RTF	        diff=astextplain
-*.md       text
+*.RTF           diff=astextplain
+*.md       text eol=lf
 *.tex      text diff=tex
 *.adoc     text
 *.textile  text
@@ -68,6 +68,9 @@
 *.tar      binary
 *.zip      binary
 
+# nginx files
+*.conf     text eol=lf
+
 #
 # Exclude files from exporting
 #
@@ -75,4 +78,3 @@
 .gitattributes export-ignore
 .gitignore     export-ignore
 .vscode/*      export-ignore
-build/*        export-ignore
