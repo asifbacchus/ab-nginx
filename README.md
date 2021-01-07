@@ -1,32 +1,43 @@
 # ab-nginx
 
-Containerized fully-functional implementation of NGINX running on Alpine. The container is by default a 'blank slate' that just serves files out of the box. Changing configuration, server blocks and content is accomplished with simple bind-mounts using a sensible, simple directory structure. Coupled with the [helper scripts](https://git.asifbacchus.app/ab-docker/ab-nginx/releases), certificates can be automatically configured with no user interaction required or easily set to work with Let's Encrypt.
+Containerized fully-functional implementation of NGINX running on Alpine. The container by default is a 'blank slate' that just serves files out of the box. Changing configuration, server blocks and content is accomplished with simple bind-mounts using a sensible, simple directory structure. The container auto-detects mounted certificates and switches to TLS automatically. [Helper scripts](https://git.asifbacchus.app/ab-docker/ab-nginx/releases) in the git repo make certificate mounting easier, allow for custom docker networks and more. The container by default can be used as a Let’s Encrypt endpoint with tools like certbot.
 
 ## Contents
 
 - [Alternate repository](#alternate-repository)
 - [Documentation and scripts](#documentation-and-scripts)
-- [Directory layout](#directory-layout)
+- [Container layout](#container-layout)
+    - [Content directory](#content-directory)
+    - [Configuration directory](#configuration-directory)
 - [Quick-start](#quick-start)
-    - [Basic server](#basic-server)
-    - [TLS](#TLS)
-    - [Custom configuration](#custom-configuration)
-    - [Custom server blocks](#custom-server-blocks)
+    - [Mounting content](#mounting-content)
+    - [Mounting configurations](#mounting-configurations)
+    - [Mounting server-blocks](#mounting-server-blocks)
+- [TLS](#tls)
 - [Shell mode](#shell-mode)
+    - [Drop to shell before NGINX loads](#drop-to-shell-before-nginx-loads)
+    - [Enter a running container](#enter-a-running-container)
 - [Environment variables](#environment-variables)
+- [Logs](#logs)
 - [Final thoughts](#final-thoughts)
 
 ## Alternate repository
 
-Throughout this document, I will reference the repository on DockerHub (`asifbacchus/ab-nginx:tag`). If you want access to perhaps slightly newer releases or need signed containers, feel free to pull them directly from my private registry instead. Simply use `docker.asifbacchus.app/nginx/ab-nginx:tag`. I usually sign major dot-version releases (1.18, 1.19, etc.) as well as the 'latest' image.
+Throughout this document, I will reference my repository on DockerHub (`asifbacchus/ab-nginx:tag`). You may also feel free to pull directly from my private registry instead, especially if you need signed containers. Simply use `docker.asifbacchus.app/nginx/ab-nginx:tag`. I usually sign major dot-version releases (1.18, 1.19, etc.) as well as the 'latest' image.
 
 ## Documentation and scripts
 
 Check out the [repo wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki) for detailed examples and documentation about the container and the [helper scripts](https://git.asifbacchus.app/ab-docker/ab-nginx/releases) which are located [here](https://git.asifbacchus.app/ab-docker/ab-nginx/releases).
 
-## Directory layout
+## Container layout
 
-You only need to be concerned with two directories. All content is in */usr/share/nginx/html* and all configuration is in */etc/nginx*. The content layout is obviously completely up to you. The configuration layout is as below:
+### Content directory
+
+All content is served from the NGINX default `/usr/share/nginx/html` directory within the container. The default set up serves everything found here and in all child directories. To use your own content (this point of this whole thing, right?) bind-mount your content to the container’s webroot: `-v /my/webstuff:/usr/share/nginx/html`.
+
+### Configuration directory
+
+All configuration is in the `/etc/nginx` directory and its children. Here is the layout of that directory within the container:
 
 ```text
 /etc/nginx
@@ -35,59 +46,111 @@ You only need to be concerned with two directories. All content is in */usr/shar
 ├── sites
 │   ├── 05-test_nonsecured.conf
 │   ├── 05-test_secured.conf.disabled
-│   └── **add additional server blocks files or replace whole directory**
+│   └── **add additional server-block files or replace whole directory**
 ├── ssl-config
 │   ├── mozIntermediate_ssl.conf.disabled
 │   └── mozModern_ssl.conf.disabled
-	 └── (SSL configuration – container auto-handles this)
+	 └── (SSL configuration – container manages this)
 ├── errorpages.conf – (pre-configured fun error pages, you can override )
 ├── health.conf – (health-check endpoint, best to not touch this)
-├── nginx.conf – **main NGINX configuration file, replace if desired**
+├── nginx.conf – **main NGINX configuration file, replace if really necessary**
 ├── server_names.conf – (list of hostnames, updated via environment variable)
-├── ssl_certs.conf – (container auto-manages this file too)
+├── ssl_certs.conf – (hard-coded for the container, best not to touch)
 ```
 
 Locations with \**starred descriptions** are designed to be overwritten via bind-mounts to customize the container. For more details on all of these files and what they do, please refer to the [repo wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki).
 
 ## Quick-start
 
-At its most basic, you only need to mount a directory with content to serve. If you want, you can also provide custom site and server configurations via bind-mounts. Let's run through a few examples:
+At it’s most basic, all you need to do is mount a directory with content to serve. For more advanced deployments, you can also mount various configurations. In most cases, you’ll also want to mount certificates so that SSL/TLS is an option. Let’s run through some examples:
 
-### Basic server
+### Mounting content
 
-The container will serve static content found at the NGINX default location of */usr/share/nginx/html* in the container.
+Simply bind-mount whatever you want served to `/usr/share/nginx/html`:
 
 ```bash
-docker run -d --name nginx --restart unless-stopped \
-  -v /myWebsite/content:/usr/share/nginx/html \
-  asifbacchus/ab-nginx:latest  
+docker run -d --name ab-nginx --restart unless-stopped \
+  -p 80:80 \
+  -v ~/web:/usr/share/nginx/html \
+  asifbacchus/ab-nginx
 ```
 
-### TLS
+### Mounting configurations
 
-The container will automatically update its configuration to use provided certificates. Simply mount them, as separate PEM files, in */certs*. The examples below assume you have all required files in one directory, but you can also mount them all separately. The required files and their locations in the container are:
+Any *.conf* files found in `/etc/nginx/config` will be loaded after *nginx.conf* and, thus, take precedence. All config files are read into the HTTP-context. Please note: **only files ending in .conf** will be read by the container by default!
+
+I suggest dividing your configurations into various files organized by type (i.e. headers.conf, buffers.conf, timeouts.conf, etc.) and putting them all into one directory and bind-mounting that to the container:
+
+```bash
+docker run -d --name ab-nginx --restart unless-stopped \
+  -p 80:80 \
+  -v ~/web:/usr/share/nginx/html \
+  -v ~/nginx/config:/etc/nginx/config:ro \
+  asifbacchus/ab-nginx
+```
+
+If you need to change configuration settings, make the changes on the host and save the file(s). Then, restart the container to apply the change:
+
+```bash
+docker restart ab-nginx
+```
+
+If you want the container to ignore a specific set of configuration options, say you’re testing something, then just rename that file with those configuration options using any extension other than *.conf*. I usually use *.conf.disabled*. Restart the container and that file will be ignored.
+
+More details and examples are found in the [wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki).
+
+### Mounting server-blocks
+
+If you just want to serve static content from your content/webroot directory, then you can ignore this section entirely. Otherwise, any files found in the `/etc/nginx/sites` directory will be loaded after configuration files. These files are meant to define the *SERVER*-context. The container has both a secure and non-secure default server block that simply serves everything found in the webroot. Depending on your SSL configuration, the container enables the correct block. You can add additional server blocks or you can override these default servers entirely by bind-mounting over the directory:
+
+```bash
+# add another server block definition that listens on port 8080
+docker run -d --name ab-nginx --restart unless-stopped \
+  -p 80:80 \
+  -p 8080:8080 \
+  -v ~/web:/usr/share/nginx/html \
+  -v ~/webapp.conf:/etc/nginx/sites/webapp.conf:ro \
+  asifbacchus/ab-nginx
+
+# override default server-blocks entirely (use your own)
+docker run -d --name ab-nginx --restart unless-stopped \
+  -p 80:80 \
+  -v ~/web:/usr/share/nginx/html \
+  -v ~/nginx/servers:/etc/nginx/sites:ro \
+  asifbacchus/ab-nginx
+```
+
+More details and examples are found in the [wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki).
+
+## TLS
+
+The container will automatically update its configuration to use provided certificates. The examples below assume you have all required files in one directory, but you can also mount them all separately. The required files and their locations in the container are:
 
 | file type                                                    | container-location   |
 | ------------------------------------------------------------ | -------------------- |
 | Full-chain certificate<br />(certificate concatenated with intermediates and/or root CA) | /certs/fullchain.pem |
 | Private key                                                  | /certs/privkey.pem   |
-| Certificate chain (intermediates concatenated with root CA)  | /certs/chain.pem     |
-| DH Parameters file (NOT required for TLS 1.3-only mode)      | /certs/dhparams.pem  |
+| Certificate chain<br />(intermediates concatenated with root CA) | /certs/chain.pem     |
+| DH Parameters file<br />(NOT required for TLS 1.3-only mode) | /certs/dhparam.pem   |
 
 Once those files are available, you can run the container as follows:
 
 ```bash
 # TLS 1.2 (requires: fullchain.pem, privkey.pem, chain.pem and dhparam.pem)
 docker run -d --name nginx --restart unless-stopped \
-  -v /myWebsite/content:/usr/share/nginx/html \
-  -v /myCerts:/certs:ro \
+  -p 80:80 \
+  -p 443:443 \
+  -v ~/web:/usr/share/nginx/html \
+  -v ~/certs:/certs:ro \
   -e SERVER_NAMES="domain.tld www.domain.tld" \
   asifbacchus/ab-nginx:latest
 
 # TLS 1.3 only mode (requires fullchain.pem, privkey.pem, chain.pem)
 docker run -d --name nginx --restart unless-stopped \
-  -v /myWebsite/content:/usr/share/nginx/html \
-  -v /myCerts:/certs:ro \
+  -p 80:80 \
+  -p 443:443 \
+  -v ~/web:/usr/share/nginx/html \
+  -v ~/certs:/certs:ro \
   -e SERVER_NAMES="domain.tld www.domain.tld" \
   -e TLS13_ONLY=TRUE
   asifbacchus/ab-nginx:latest
@@ -95,61 +158,51 @@ docker run -d --name nginx --restart unless-stopped \
 
 The container will load a secure configuration automatically and require SSL connections. If you want to enforce HSTS, simply set the HSTS environment variable to true by adding `-e HSTS=TRUE` before specifying the container name. Careful about doing this while testing though! Also, certificates should always be mounted read-only (`:ro`) for security reasons!
 
-You may have noticed I also specified the `SERVER_NAMES` variable. This is necessary or SSL will not work since the hostname the server responds to must match the certificate being presented. **Make sure you set this environment variable to match your certificates!**
+You may have noticed I also specified the `SERVER_NAMES` variable. This is necessary or SSL will not work since the hostname the server responds to must match the certificate being presented. **Make sure you set this environment variable to match your certificates!** N.B. If you using your own server-blocks, then this environment variable is **NOT** required – it is only used by the container when auto-configuring the default server-blocks.
 
 If you want to integrate with Let's Encrypt, please refer to the [wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki).
 
-### Custom configuration
-
-The container ships as a nearly blank-slate with only NGINX default configurations for everything except SSL which is designed to be automatically handled. The [helper scripts](https://git.asifbacchus.app/ab-docker/ab-nginx) auto-load a sensible fully preconfigured general server environment complete with reasonable settings for things like security headers, proxy settings, timeouts and buffers.
-
-Using your own settings is very simple too! Simple bind-mount your configuration files to */etc/nginx/config* and any files will be read into the configuration. If you want to override *nginx.conf*, just bind-mount on top of that at */etc/nginx/nginx.conf*.
-
-```bash
-# add custom configuration files via directory mounting
-docker run -d --name nginx --restart unless-stopped \
-  -v /myWebsite/content:/usr/share/nginx/html \
-  -v /myWebsite/myConfigs:/etc/nginx/config:ro \
-  asifbacchus/ab-nginx:latest
-
-# replace nginx.conf and add custom configurations
-docker run -d --name nginx --restart unless-stopped \
-  -v /myWebsite/content:/usr/share/nginx/html \
-  -v /myWebsite/myConfigs:/etc/nginx/config:ro \
-  -v /myWebsite/nginx.conf:/etc/nginx/nginx.conf:ro \
-  asifbacchus/ab-nginx:latest
-```
-
-You might notice that I've been mounting configurations as read-only (`:ro`). This is a safety precaution but is not strictly necessary.
-
-### Custom server blocks
-
-If you only want to serve static assets from the webroot directory, then you can just stick with the defaults. If you'd like to specify your own server blocks for particular applications, you can easily overwrite the container defaults with as many server blocks as you'd like. Just put each one in a separate file, all in one directory, and bind-mount it in the container at */etc/nginx/sites*:
-
-```bash
-docker run -d --name nginx --restart unless-stopped \
-  -v /myWebsite/content:/usr/share/nginx/html \
-  -v /myWebsite/serverBlocks:/etc/nginx/sites:ro \
-  asifbacchus/ab-nginx:latest
-```
-
-Remember that NGINX processes files in order, so you might want to number your configurations! For example, `00-redirect_to_ssl`, `10-letsEncrypt`, `20-mySite`, etc.
-
 ## Shell mode
 
-Running the container in shell mode as a great way to verify configurations or just to see what the defaults are. This will apply all configurations but will *not* actually start NGINX. This lets you browse all mounted locations, make sure everything is where you want it, etc.
+Running the container in shell mode as a great way to verify configurations, make sure everything mounted correctly or to see what the defaults are. You have two options: drop to shell before NGINX loads or after.
+
+### Drop to shell before NGINX loads
+
+This is most useful to verify where things mounted, etc. This is also useful if some configuration is causing NGINX to panic and shutting down the container. You might notice that I’m not mounting anything as read-only in this case. This way I could make changes in the container directly if I wanted and then test them right away with `nginx -t`. To make that easier, I have included nano in the container :smile: Note also that I’m using the `--rm` flag to auto-remove the container when I exit it.
 
 ```bash
 docker run -it --rm \
-  -v /myWebsite/content:/usr/share/nginx/html \
-  -v /myWebsite/myConfigs:/etc/nginx/config:ro \
-  -v /myWebsite/serverBlocks:/etc/nginx/sites:ro \
-  -v /myWebsite/certs:/certs:ro \
-  -e TLS13_ONLY=TRUE \
-  asifbacchus/ab-nginx:latest /bin/sh
+  -v ~/web:/usr/share/nginx/html \
+  -v ~/nginx/config:/etc/nginx/config \
+  -v ~/nginx/servers:/etc/nginx/sites \
+  -v ~/certs:/certs \
+  asifbacchus/ab-nginx /bin/sh
+```
+
+### Enter a running container
+
+If you want to enter a running container and check things out:
+
+```
+docker exec -it ab-nginx /bin/sh
 ```
 
 Remember that this container is running Alpine linux, so the shell is ASH. You do *not* have all the bells and whistles of BASH! Also, many commands are run via busybox, so some things may not work exactly like you might be used to in a Debian/Ubuntu environment, for example. As a side note, *ping* is installed and fully functional in this container so that makes troubleshooting a little easier.
+
+## Logs
+
+The container logs everything to stdout and stderr – in other words, the console. To see what’s going on with NGINX simply use docker’s integrated logging features:
+
+```bash
+# default log lookback
+docker logs ab-nginx
+
+# last 50 lines
+docker logs -n 50 ab-nginx
+
+# show last 10 lines and follow from there in realtime (ctrl-c to stop)
+docker logs -n 10 -f ab-nginx
+```
 
 ## Environment variables
 
