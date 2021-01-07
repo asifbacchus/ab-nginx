@@ -10,4 +10,4 @@
 ab-nginx.params
 
 # don't track checksums -- no point
-checksums.sha256
+checksums.sha256*
