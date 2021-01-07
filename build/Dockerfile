@@ -15,8 +15,7 @@ RUN addgroup --gid ${UID} www-docker \
         www-docker
 
 # add nano, fun error pages & LetsEncrypt challenge directory outside webroot
-RUN apk --no-cache add nano \
-    && cd /usr/share/nginx \
+RUN cd /usr/share/nginx \
     && rm -rf html/* \
     && wget -O /tmp/errorpages.tar.gz https://git.asifbacchus.app/asif/fun-errorpages/archive/v1.0.tar.gz \
     && tar -xzf /tmp/errorpages.tar.gz -C /tmp \
@@ -39,7 +38,6 @@ LABEL org.opencontainers.image.title="ab-nginx"
 LABEL org.opencontainers.image.description="NGINX-mainline-alpine with more logical file location layout and automatic SSL set up if certificates are provided."
 
 # copy configuration files
-COPY nanorc /etc/nanorc
 COPY entrypoint.sh /entrypoint.sh
 COPY config /etc/nginx/
 COPY sites /etc/nginx/sites/
@@ -75,7 +73,7 @@ CMD [ "nginx", "-g", "daemon off;" ]
 # add build date and version labels
 ARG BUILD_DATE
 LABEL org.opencontainers.image.version="1.19.6"
-LABEL app.asifbacchus.docker.internalVersion="3.1"
+LABEL app.asifbacchus.docker.internalVersion="3.2"
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 
 #EOF
