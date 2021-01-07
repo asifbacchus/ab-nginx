@@ -22,7 +22,8 @@ RUN apk --no-cache add libcap \
     && wget -O /tmp/errorpages.tar.gz https://git.asifbacchus.app/asif/fun-errorpages/archive/v1.0.tar.gz \
     && tar -xzf /tmp/errorpages.tar.gz -C /tmp \
     && mv /tmp/fun-errorpages/errorpages ./ \
-    && rm -rf /tmp/*
+    && rm -rf /tmp/* \
+    && mkdir /usr/share/nginx/letsencrypt
 
 # health check
 HEALTHCHECK --interval=60s --timeout=5s --start-period=30s --retries=3 \
