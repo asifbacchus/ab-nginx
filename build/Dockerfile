@@ -15,15 +15,14 @@ RUN addgroup --gid ${UID} ${USER} \
         --uid ${UID} \
         ${USER}
 
-# add fun error pages & LetsEncrypt challenge directory outside webroot
-RUN apk --no-cache add git \
+# add nano, fun error pages & LetsEncrypt challenge directory outside webroot
+RUN apk --no-cache add nano \
     && cd /usr/share/nginx \
     && rm -rf html/* \
-    && git clone https://git.asifbacchus.app/asif/fun-errorpages.git /tmp \
-    && apk del git \
-    && mv /tmp/errorpages/ ./ \
-    && rm -rf /tmp/* \
-    && rm -rf /tmp/.git*
+    && wget -O /tmp/errorpages.tar.gz https://git.asifbacchus.app/asif/fun-errorpages/archive/v1.0.tar.gz \
+    && tar -xzf /tmp/errorpages.tar.gz -C /tmp \
+    && mv /tmp/fun-errorpages/errorpages ./ \
+    && rm -rf /tmp/*
 
 # health check
 HEALTHCHECK --interval=60s --timeout=5s --start-period=30s --retries=3 \
@@ -41,6 +40,7 @@ LABEL org.opencontainers.image.title="ab-nginx"
 LABEL org.opencontainers.image.description="NGINX-mainline-alpine with more logical file location layout and automatic SSL set up if certificates are provided."
 
 # copy configuration files
+COPY nanorc /etc/nanorc
 COPY entrypoint.sh /entrypoint.sh
 COPY config /etc/nginx/
 COPY sites /etc/nginx/sites/
