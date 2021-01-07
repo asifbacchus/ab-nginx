@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-### start ab-nginx container using params file variables
+# start ab-nginx container using params file variables
 #
 
 # text formatting presets
@@ -53,14 +53,14 @@ checkExist() {
 scriptHelp() {
   printf "\n%s%1000s\n" "$magenta" | tr " " "-" | cut -c -$width
   printf "%s" "$norm"
-  textblock "This is a simple helper script so you can avoid lengthy typing when working with the nginx container. The script reads the contents of 'ab-nginx.params' and constructs various 'docker run' commands based on that file. The biggest time-saver is working with certificates. If they are specified in the params file, the script will automatically bind-mount them so nginx serves content via SSL by default."
+  textblock "This is a simple helper script so you can avoid typing lengthy commands when working with the ab-nginx container."
+  textblock "The script reads the contents of 'ab-nginx.params' and constructs various 'docker run' commands based on that file. The biggest time-saver is working with certificates. If they are specified in the params file, the script will automatically bind-mount them so nginx serves content via SSL by default."
   newline
-  textblock "If you run the script with no parameters, it will execute the container 'normally': Run in detached mode with nginx automatically launched and logging to stdout.  If you specified certificates, nginx will serve over SSL by default."
-  newline
+  textblock "If you run the script with no parameters, it will execute the container 'normally': Run in detached mode with nginx automatically launched. If you specified certificates, nginx will serve over SSL by default."
   textblock "Note: Containers (except shell) are always set to restart 'unless-stopped'. You must remove them manually if desired."
   printf "%s" "$magenta"
   newline
-  textblock "The script has the following parameters:"
+  textblock "The script has the following (optional) parameters:"
   textblockParam 'parameter in cyan' 'default in yellow'
   newline
   textblockParam '-n|--name' 'ab-nginx'
