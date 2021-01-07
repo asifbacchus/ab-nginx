@@ -23,6 +23,8 @@ RUN apk --no-cache add libcap \
     && tar -xzf /tmp/errorpages.tar.gz -C /tmp \
     && mv /tmp/fun-errorpages/errorpages ./ \
     && rm -rf /tmp/* \
+    && rmdir docker-entrypoint.d \
+    && rm -f docker-entrypoint.sh \
     && mkdir /usr/share/nginx/letsencrypt
 
 # health check
