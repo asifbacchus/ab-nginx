@@ -54,7 +54,7 @@ RUN chown -R www-docker:www-docker /usr/share/nginx \
     && find /usr/share/nginx -type f -exec chmod 644 {} \; \
     && chown -R www-docker:www-docker /etc/nginx \
     && find /etc/nginx -type d -exec chmod 750 {} \; \
-    && find /etc/nginx -type f -exec chmod 640 {} \;
+    && find /etc/nginx -type f -exec chmod 640 {} \; \
     && chown www-docker:www-docker /var/cache/nginx \
     && chown www-docker:www-docker /var/log/nginx
 USER www-docker
