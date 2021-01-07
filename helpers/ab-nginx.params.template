@@ -1,103 +1,152 @@
-#####
-# Parameters for use by ab-nginx convenience script
+###
+### Parameters for use by ab-nginx helper script
+###
+### If you are NOT using the 'ab-nginx.sh' script file to start the container,
+### then you don't have to do anything with this file.
+###
+
+
 #
-# If you are not using the 'ab-nginx.sh' script file to start the container,
-# then you don't have to do anything with this file.
-#####
+# Network options
+#
 
-
-### Network options
 # If you want to specify a network to which this container should bind or one
-#   that should be created, then use this variable. If you don't know what this
-#   means or if you just want to use the default, leave this line/variable
-#   commented-out.
+# that should be created, then use this variable. If you don't know what this
+# means or if you just want to use the default, leave this variable commented.
+# REQUIRED: NO
+# DEFAULT: nginx_network
+# VALID OPTIONS: network names acceptable to the docker engine
 #NETWORK=nginx_network
 
 # If you want to specify a particular IP subnet for the network to be created
-#   as per the above variable, specify it here.  Again, if you don't know what
-#   this means, just leave this commented-out.
+# as per the above variable, specify it here.  Again, if you don't know what
+# this means, just leave this variable commented.
+# REQUIRED: NO
+# DEFAULT: '172.31.254.0/24'
+# VALID OPTIONS: subnet in CIDR format
 #SUBNET='172.31.254.0/24'
 
 
-### Timezone
+#
+# Timezone
+#
+
 # This doesn't impact any functionality of the container, but it does make your
-#   logs easier to understand if they report the correct local time, right?
-#   (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-TZ=Area/Location
+# logs easier to understand if they report the correct local time, right? Valid
+# options can be found at
+#   https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+# REQUIRED: NO
+# DEFAULT: Etc/UTC
+# VALID OPTIONS: IANA time zones in TZ format
+#TZ=Etc/UTC
 
 
-### NGINX options
+#
+# NGINX options
+#
+
 # Hostnames to which this instance of NGINX should answer:
 # By default, this is set to '_' meaning 'match anything'.  However, that won't
-#   work if you're using SSL certificates! Multiple hostnames must be space
-#   delimited and "enclosed in quotes".
+# work if you're using SSL certificates! Multiple hostnames must be space
+# delimited and "enclosed in quotes".
+#
 # This is NOT required if you are supplying your own server blocks via
-#   'SERVERS_DIR'
-HOSTNAMES="domain.tld www.domain.tld server.domain.tld alt.domain.tld"
+# 'SERVERS_DIR'
+#
+# REQUIRED: YES, if using SSL and default server-blocks
+# DEFAULT: "_"
+#HOSTNAMES="domain.tld www.domain.tld server.domain.tld alt.domain.tld"
 
 # Ports to listen on:
 # If you need to use ports other than HTTP=80 and HTTPS=443, remember to set up
-#   your server blocks accordingly! See 'test_secured.conf.disabled' in the
-#   container if you need help.  If you're using the default configuration, the
-#   'test blocks' automatically adjust for non-standard ports.
-# If you want to use the defaults, either leave these lines as-is, comment them
-#   out or just delete them.
+# your server blocks accordingly!
+#
+# If you're using the default server-blocks, they will auto-adjust to whatever
+# you use here.
+# REQUIRED: NO
+# DEFAULTS: 80 and 443, respectively
 #HTTP_PORT=80
 #HTTPS_PORT=443
 
 # Access logging (global preference):
 # Unless overridden in a server/location block, access logging will be handled
-#   according to this setting.  Default is OFF.  Choices are 'ON' or 'OFF'.
-#   Logs will be printed to the console so they are accessible via
-#   'docker logs ...'
-ACCESS_LOG=OFF
+# according to this setting. Logs are printed to the container console.
+# REQUIRED: NO
+# DEFAULT: OFF
+# VALID OPTIONS: 'ON' or 'OFF'
+#ACCESS_LOG=OFF
 
-### Content files
-# Whatever you specify here will replace the default files in the container
-#   with your content/configurations. You may comment any/all of the following
-#   lines to disable them use the container defaults.
+
+#
+# Content locations
+# Whatever you specify here will replace the default files in the container with
+# your content/configurations. You may comment any/all of the following lines to
+# disable them use the container defaults.
+#
 
 # Specify a directory containing your NGINX configurations (if any)
-#   Remember that these will be all be applied in the HTTP configuration
-#   context.
+# Remember that these will be all be applied in the HTTP configuration context.
 # Only files with a ".conf" extension will be loaded!  If you want to disable a
-#   file, simply change its extension (i.e. '.conf.disabled').
+# file, simply change its extension (i.e. '.conf.disabled').
+#
+# REMEMBER: Your configuration files must be readable by UID 8080!
 CONFIG_DIR=$(pwd)/config
 
 # Specify a directory containing your NGINX server-block configurations (if any)
 # If you are just serving static content from the 'webroot', you can use the
-#   hard-coded 'test blocks' in the container and specify a webroot with your
-#   files below.
+# container default server-blocks and comment this variable.
+#
 # More likely, you will have your own server blocks.  Remember, files are
-#   processed in order so consider starting file names with numbers
+# processed in order so consider starting file names with numbers
 #   (i.e. 00-first_server.conf, 05-second_server.conf)
+#
 # Only files with a ".conf" extension will be loaded!  If you want to disable a
 #   file, simply change its extension (i.e. '.conf.disabled').
+#
+# REMEMBER: Your server-block files must be readable by UID 8080!
 SERVERS_DIR=$(pwd)/sites
 
 # Specify a directory containing 'snippets' of NGINX code you want/need to
-#   reference in various other configuration files. Pointers to additional SSL
-#   certificates for other hosted domains is a good example of this.
+# reference in other configuration files. Pointers to other SSL certificates for
+# hosted domains or commonly used headers are good examples.
+#
+# You can then "include /etc/nginx/snippets/yourSnippet.conf;" in your configs
+# instead of having to type the same thing many times.
+
+# This is totally optional! Comment this variable to disable it.
+# REMEMBER: Your snippets must be readable by UID 8080!
 SNIPPETS_DIR=$(pwd)/snippets
 
-# Specify a directory that contains files for your 'webroot'.  This includes
-#   things like HTML, CSS, etc.
+# Specify a directory with the content you want to serve.
+# REMEMBER: This directory must be readable by UID 8080!
 WEBROOT_DIR=/var/www
 
 
-### SSL options:
+#
+# SSL options:
+#
+
 # Enable HSTS only AFTER you've tested SSL implementation!  Container sets the
-#   header to require SSL for 6 months! Subdomains are NOT included.
-HSTS=FALSE
+# header to require SSL for 6 months! Subdomains are NOT included.
+# REQUIRED: NO
+# DEFAULT: FALSE
+# VALID OPTIONS: 'TRUE', 'FALSE'
+#HSTS=FALSE
 
-# If 'FALSE' (default), NGINX will accept both TLS 1.2 and 1.3 connections.
-# If 'TRUE', only TLS 1.3 connections will be accepted.
-TLS13_ONLY=FALSE
+# TLS 1.3 mode:
+#   If 'FALSE' (default), NGINX will accept both TLS 1.2 and 1.3 connections.
+#   If 'TRUE', only TLS 1.3 connections will be accepted.
+#TLS13_ONLY=FALSE
 
-### Certificate files to be bind-mounted
-# Remember, if you are mounting symlinks (like when using Let's Encrypt), you
-#   MUST specify the full path of the symlink so the target is resolved!
-# DH (Diffie-Hellman Parameters file) is only required if using TLS 1.2
+
+#
+# Certificate files
+#
+# If you are mounting symlinks you MUST specify the full path of the symlink so
+# the target is resolved! DH (Diffie-Hellman Parameters file) is only required
+# if using TLS 1.2.
+#
+# REMEMBER: ALL files must be readble by UID 8080!
 #SSL_CERT=/path/to/your/ssl-certificate/fullchain.pem
 #SSL_KEY=/path/to/your/ssl-private-key/privkey.pem
 #SSL_CHAIN=/path/to/your/ssl-certificate-chain/chain.pem
