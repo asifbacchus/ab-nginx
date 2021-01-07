@@ -76,6 +76,7 @@ ENV TLS13_ONLY=FALSE
 ENTRYPOINT [ "/entrypoint.sh" ]
 
 # run NGINX by default
+STOPSIGNAL SIGQUIT
 CMD [ "nginx", "-g", "daemon off;" ]
 
 # add build date and version labels
