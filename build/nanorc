@@ -50,7 +50,7 @@ set constantshow
 ## (The old form, 'const', is deprecated.)
 
 ## Use cut-to-end-of-line by default.
-set cut
+set cutfromcursor
 
 ## Set the line length for wrapping text and justifying paragraphs.
 ## If the value is 0 or less, the wrapping point will be the screen
@@ -136,7 +136,7 @@ set nowrap
 # set rebinddelete
 
 ## Fix numeric keypad key confusion problem.
-set rebindkeypad
+set rawsequences
 
 ## Do extended regular expression searches by default.
 # set regexp
@@ -261,9 +261,9 @@ include "/usr/share/nano/*.nanorc"
 # alt-x to cut highlighted text
 # alt-v to paste text
 bind ^S savefile main
-bind M-C copytext main
+bind M-C copy main
 bind M-X cut main
-bind M-V uncut main
+bind M-V paste main
 # bind M-Q findprevious main
 # bind M-W findnext main
 # bind M-B cutwordleft main
