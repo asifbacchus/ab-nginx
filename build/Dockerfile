@@ -1,6 +1,6 @@
 FROM nginx:mainline-alpine
 
-# default username and uid for nginx user
+# default uid for nginx user
 ARG UID=8001
 
 # create nginx user
@@ -14,8 +14,10 @@ RUN addgroup --gid ${UID} www-docker \
         --uid ${UID} \
         www-docker
 
-# add nano, fun error pages & LetsEncrypt challenge directory outside webroot
-RUN cd /usr/share/nginx \
+# add libcap, allow nginx to bind to ports <1024, extract fun error pages & create LetsEncrypt challenge directory outside webroot
+RUN apk --no-cache add libcap \
+    && setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx \
+    && cd /usr/share/nginx \
     && rm -rf html/* \
     && wget -O /tmp/errorpages.tar.gz https://git.asifbacchus.app/asif/fun-errorpages/archive/v1.0.tar.gz \
     && tar -xzf /tmp/errorpages.tar.gz -C /tmp \
@@ -47,12 +49,14 @@ COPY webroot /usr/share/nginx/html/
 EXPOSE 80 443
 
 # clean-up permissions and run as www-docker user
-RUN chown -R www-docker:www-docker /usr/share/nginx/html \
-    && find /usr/share/nginx/html -type d -exec chmod 775 {} \; \
-    && find /usr/share/nginx/html -type f -exec chmod 664 {} \; \
+RUN chown -R www-docker:www-docker /usr/share/nginx \
+    && find /usr/share/nginx -type d -exec chmod 755 {} \; \
+    && find /usr/share/nginx -type f -exec chmod 644 {} \; \
     && chown -R www-docker:www-docker /etc/nginx \
-    && find /etc/nginx -type d -exec chmod 770 {} \; \
-    && find /etc/nginx -type f -exec chmod 660 {} \;
+    && find /etc/nginx -type d -exec chmod 750 {} \; \
+    && find /etc/nginx -type f -exec chmod 640 {} \;
+    && chown www-docker:www-docker /var/cache/nginx \
+    && chown www-docker:www-docker /var/log/nginx
 USER www-docker
 
 # default environment variables
