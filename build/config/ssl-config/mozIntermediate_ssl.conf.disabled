@@ -4,7 +4,9 @@
 # Generated: January 5, 2021
 #
 
-# SSL certificates should be defined in the relevant server block
+# SSL certificate and key location
+ssl_certificate         /certs/fullchain.pem;
+ssl_certificate_key     /certs/privkey.pem;
 
 # SSL parameters
 ssl_session_timeout 1d;
