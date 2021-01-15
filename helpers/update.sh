@@ -32,7 +32,7 @@ textblockHeader() {
 }
 
 textblockParam() {
-  printf "%s%s%s\n" "$info" "$1" "$norm"
+  printf "%s%-35s%s%s\n" "$info" "$1" "$2" "$norm"
 }
 
 textNewline() {
