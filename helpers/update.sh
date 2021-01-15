@@ -39,24 +39,10 @@ else
 fi
 
 ### pre-requisites
-
 # check if wget is installed
 if ! command -v wget >/dev/null 2>&1; then
   errMsg "Sorry, this script requires that 'wget' is installed in order to download updates. Exiting."
 fi
-
-# include in docker section
-## check if docker is installed
-#if ! command -v docker >/dev/null 2>&1; then
-#  errMsg "Sorry, it appears that docker is not installed on this machine! Exiting."
-#fi
-#
-## is user root or in the docker group?
-#if [ ! "$(id -u)" -eq 0 ]; then
-#  if ! id -Gn | grep docker >/dev/null; then
-#    errMsg "You must either be root or in the 'docker' group to pull container updates."
-#  fi
-#fi
 
 # zero counters
 updatesAvailable=0
@@ -113,14 +99,27 @@ done
 
 
 ### update container
-printf "%s\n*** Updating %s container and service scripts ***\n\n%s" "$info" "$containerName" "$norm"
+if [ "$doDockerUpdate" -eq 1 ]; then
+  # check if docker is installed
+  if ! command -v docker >/dev/null 2>&1; then
+    errMsg "Sorry, it appears that docker is not installed on this machine! Exiting."
+  fi
 
-printf "Updating container:\n"
-if ! docker pull "$containerUpdatePath"; then
-  errMsg "There was an error updating the container. Try again later."
-else
-  okMsg "Container updated!"
+  # is user root or in the docker group?
+  if [ ! "$(id -u)" -eq 0 ]; then
+    if ! id -Gn | grep docker >/dev/null; then
+      errMsg "You must either be root or in the 'docker' group to pull container updates."
+    fi
+  fi
+
+  printf "%s\n*** Updating %s container ***\n\n%s" "$info" "$containerName" "$norm"
+  if ! docker pull "$containerUpdatePath"; then
+    errMsg "There was an error updating the container. Try again later."
+  else
+    okMsg "Container updated!"
+  fi
 fi
+
 
 ### update scripts
 printf "%sUpdating %s service scripts%s\n" "$info" "$containerName" "$norm"
