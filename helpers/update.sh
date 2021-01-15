@@ -61,7 +61,6 @@ checksumFilename='checksums.sha256'
 # operation triggers
 doDockerUpdate=1
 doScriptUpdate=1
-doContainerRestart=1
 
 # files to update
 localScriptName="$(basename "$0")"
@@ -83,10 +82,6 @@ while [ $# -gt 0 ]; do
     -c|--container|--container-only)
       # update docker container only, skip script update
       doScriptUpdate=0
-      ;;
-    --no-restart)
-      # do not restart container automatically
-      doContainerRestart=0
       ;;
     *)
       printf "%s\nUnknown option: %s\n" "$err" "$1"
@@ -211,6 +206,7 @@ if [ "$doScriptUpdate" -eq 1 ]; then
     fi
   done <"$checksumFilename"
 fi
+
 
 ### display results
 printf "\n%s*** Results ***%s\n" "$info" "$norm"
