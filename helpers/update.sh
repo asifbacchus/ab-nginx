@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### update script for ab-nginx container and utility scripts
-# version 1.0.0
+# version 2.0.0
 # script by Asif Bacchus
 ###
 
@@ -45,17 +45,18 @@ if ! command -v wget >/dev/null 2>&1; then
   errMsg "Sorry, this script requires that 'wget' is installed in order to download updates. Exiting."
 fi
 
-# check if docker is installed
-if ! command -v docker >/dev/null 2>&1; then
-  errMsg "Sorry, it appears that docker is not installed on this machine! Exiting."
-fi
-
-# is user root or in the docker group?
-if [ ! "$(id -u)" -eq 0 ]; then
-  if ! id -Gn | grep docker >/dev/null; then
-    errMsg "You must either be root or in the 'docker' group to pull container updates."
-  fi
-fi
+# include in docker section
+## check if docker is installed
+#if ! command -v docker >/dev/null 2>&1; then
+#  errMsg "Sorry, it appears that docker is not installed on this machine! Exiting."
+#fi
+#
+## is user root or in the docker group?
+#if [ ! "$(id -u)" -eq 0 ]; then
+#  if ! id -Gn | grep docker >/dev/null; then
+#    errMsg "You must either be root or in the 'docker' group to pull container updates."
+#  fi
+#fi
 
 # zero counters
 updatesAvailable=0
@@ -71,9 +72,45 @@ containerUpdatePath="docker.asifbacchus.app/$dockerNamespace/$containerName:late
 server="https://asifbacchus.app/updates/docker/$dockerNamespace/$containerName/"
 checksumFilename='checksums.sha256'
 
+# operation triggers
+doDockerUpdate=1
+doScriptUpdate=1
+doContainerRestart=1
+
 # files to update
 localScriptName="$(basename "$0")"
 repoScriptName='update.sh'
+
+
+### process startup parameters
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|-\?|--help)
+      # display inline help
+      # TODO: create script help function
+      scriptHelp
+      ;;
+    -s|--scripts|--scripts-only)
+      # update scripts only, skip docker container update
+      doDockerUpdate=0
+      ;;
+    -c|--container|--container-only)
+      # update docker container only, skip script update
+      doScriptUpdate=0
+      ;;
+    --no-restart)
+      # do not restart container automatically
+      doContainerRestart=0
+      ;;
+    *)
+      printf "%s\nUnknown option: %s\n" "$err" "$1"
+      printf "%sUse '--help' for valid options%s\n\n" "$info" "$norm"
+      exit 1
+      ;;
+  esac
+shift
+done
+
 
 ### update container
 printf "%s\n*** Updating %s container and service scripts ***\n\n%s" "$info" "$containerName" "$norm"
