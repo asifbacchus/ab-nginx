@@ -4,23 +4,23 @@ Containerized fully-functional implementation of NGINX running on Alpine **as a 
 
 ## Contents
 
-[Alternate repository](#alternate-repository)
-[Documentation and scripts](#documentation-and-scripts)
-[Permissions](#permissions)
-[Container layout](#container-layout)
-	[Content directory](#content-directory)
-	[Configuration directory](#configuration-directory)
-[Quick-start](#quick-start)
-	[Mounting content](#mounting-content)
-	[Mounting configurations](#mounting-configurations)
-	[Mounting server-blocks](#mounting-server-blocks)
-[TLS](#tls)
-[Environment variables](#environment-variables)
-[Shell mode](#shell-mode)
-	[Drop to shell before NGINX loads](#drop-to-shell-before-nginx-loads)
-	[Enter a running container](#enter-a-running-container)
-[Logs](#logs)
-[Final thoughts](#final-thoughts)#final-thoughts)
+[Alternate repository](#alternate-repository)<br>
+[Documentation and scripts](#documentation-and-scripts)<br>
+[Permissions](#permissions)<br>
+[Container layout](#container-layout)<br>
+	[Content directory](#content-directory)<br>
+	[Configuration directory](#configuration-directory)<br>
+[Quick-start](#quick-start)<br>
+	[Mounting content](#mounting-content)<br>
+	[Mounting configurations](#mounting-configurations)<br>
+	[Mounting server-blocks](#mounting-server-blocks)<br>
+[TLS](#tls)<br>
+[Environment variables](#environment-variables)<br>
+[Shell mode](#shell-mode)<br>
+	[Drop to shell before NGINX loads](#drop-to-shell-before-nginx-loads)<br>
+	[Enter a running container](#enter-a-running-container)<br>
+[Logs](#logs)<br>
+[Final thoughts](#final-thoughts)
 
 ## Alternate repository
 
@@ -249,4 +249,3 @@ I think that's everything to get you going if you are already familiar with dock
 If I've forgotten anything, you find any bugs or you have suggestions, please file an issue either on my private [git server ](https://git.asifbachus.app/ab-docker/ab-nginx) or on [github](https://github.com/asifbacchus/ab-nginx). Also, I am *not* affiliated with NGINX in any way, so please **do not** bother them with any issues you find with this container. Bother me instead, I actually enjoy it!
 
 **All the best and have fun!**
-
