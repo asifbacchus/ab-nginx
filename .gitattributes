@@ -73,8 +73,12 @@
 
 #
 # Exclude files from exporting
+#   only export helper scripts
 #
 
 .gitattributes export-ignore
 .gitignore     export-ignore
-.vscode/*      export-ignore
+.vscode        export-ignore
+.idea          export-ignore
+build          export-ignore
+README.md      export-ignore
