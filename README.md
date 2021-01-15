@@ -250,6 +250,6 @@ docker logs -n 10 -f ab-nginx
 
 I think that's everything to get you going if you are already familiar with docker and with NGINX in general. If you need more help, please [refer to the wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki). I've explained everything there in detail. Also, check out the [helper scripts](https://git.asifbacchus.app/ab-docker/ab-nginx/releases) especially if you are deploying certificates. The scripts take care of all the docker command-lines for you so you have much less typing!
 
-If I've forgotten anything, you find any bugs or you have suggestions, please file an issue either on my private [git server ](https://git.asifbachus.app/ab-docker/ab-nginx) or on [github](https://github.com/asifbacchus/ab-nginx). Also, I am *not* affiliated with NGINX in any way, so please **do not** bother them with any issues you find with this container. Bother me instead, I actually enjoy it!
+If I've forgotten anything, you find any bugs or you have suggestions, please file an issue either on my private [git server ](https://git.asifbacchus.app/ab-docker/ab-nginx) or on [github](https://github.com/asifbacchus/ab-nginx). Also, I am *not* affiliated with NGINX in any way, so please **do not** bother them with any issues you find with this container. Bother me instead, I actually enjoy it!
 
 **All the best and have fun!**
