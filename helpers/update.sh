@@ -102,31 +102,29 @@ doScriptUpdate=1
 localScriptName="$(basename "$0")"
 repoScriptName='update.sh'
 
-
 ### process startup parameters
 while [ $# -gt 0 ]; do
   case "$1" in
-    -h|-\?|--help)
-      # display inline help
-      scriptHelp
-      ;;
-    -s|--scripts|--scripts-only)
-      # update scripts only, skip docker container update
-      doDockerUpdate=0
-      ;;
-    -c|--container|--container-only)
-      # update docker container only, skip script update
-      doScriptUpdate=0
-      ;;
-    *)
-      printf "%s\nUnknown option: %s\n" "$err" "$1"
-      printf "%sUse '--help' for valid options%s\n\n" "$info" "$norm"
-      exit 1
-      ;;
+  -h | -\? | --help)
+    # display inline help
+    scriptHelp
+    ;;
+  -s | --scripts | --scripts-only)
+    # update scripts only, skip docker container update
+    doDockerUpdate=0
+    ;;
+  -c | --container | --container-only)
+    # update docker container only, skip script update
+    doScriptUpdate=0
+    ;;
+  *)
+    printf "%s\nUnknown option: %s\n" "$err" "$1"
+    printf "%sUse '--help' for valid options%s\n\n" "$info" "$norm"
+    exit 1
+    ;;
   esac
-shift
+  shift
 done
-
 
 ### update container
 if [ "$doDockerUpdate" -eq 1 ]; then
@@ -149,7 +147,6 @@ if [ "$doDockerUpdate" -eq 1 ]; then
     okMsg "Container updated!"
   fi
 fi
-
 
 ### update scripts
 if [ "$doScriptUpdate" -eq 1 ]; then
@@ -202,9 +199,9 @@ if [ "$doScriptUpdate" -eq 1 ]; then
     updateFilename="$field2"
     repoFileChecksum="$field1"
     if [ -f "$updateFilename" ]; then
-        localFileChecksum=$(sha256sum "$updateFilename" | grep -o '^\S*')
+      localFileChecksum=$(sha256sum "$updateFilename" | grep -o '^\S*')
     else
-        localFileChecksum=0
+      localFileChecksum=0
     fi
 
     # update file if necessary
@@ -241,7 +238,6 @@ if [ "$doScriptUpdate" -eq 1 ]; then
     fi
   done <"$checksumFilename"
 fi
-
 
 ### display results
 if [ "$doScriptUpdate" -eq 1 ]; then
