@@ -244,9 +244,11 @@ fi
 
 
 ### display results
-printf "\n%s*** Results ***%s\n" "$info" "$norm"
-printf "\tUpdates: %s available\n" "$updatesAvailable"
-printf "\tDownloads: %s%s successful%s, %s%s failed%s\n" "$ok" "$downloadSuccess" "$norm" "$err" "$downloadFailed" "$norm"
-printf "\tUpdates: %s%s applied%s, %s%s failed%s\n" "$ok" "$updateSuccess" "$norm" "$err" "$updateFailed" "$norm"
+if [ "$doScriptUpdate" -eq 1 ]; then
+  printf "\n%s*** Results ***%s\n" "$info" "$norm"
+  printf "\tUpdates: %s available\n" "$updatesAvailable"
+  printf "\tDownloads: %s%s successful%s, %s%s failed%s\n" "$ok" "$downloadSuccess" "$norm" "$err" "$downloadFailed" "$norm"
+  printf "\tUpdates: %s%s applied%s, %s%s failed%s\n" "$ok" "$updateSuccess" "$norm" "$err" "$updateFailed" "$norm"
+fi
 
 exit 0
