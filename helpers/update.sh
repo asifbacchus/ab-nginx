@@ -122,94 +122,95 @@ fi
 
 
 ### update scripts
-printf "%sUpdating %s service scripts%s\n" "$info" "$containerName" "$norm"
+if [ "$doScriptUpdate" -eq 1 ]; then
+  printf "%s*** Updating %s service scripts ***%s\n" "$info" "$containerName" "$norm"
 
-## download latest checksums
-printf "Getting latest checksums... "
-if ! wget --quiet --tries=3 --timeout=10 -N "${server}${checksumFilename}"; then
-  errNotify
-  errMsg "Unable to download checksums. Try again later."
-else
-  okNotify
-fi
-
-## check for updates to this script
-printf "Checking for updates to this script... "
-repoScriptChecksum=$(grep "$repoScriptName" "$checksumFilename" | grep -o '^\S*')
-localScriptChecksum=$(sha256sum "$localScriptName" | grep -o '^\S*')
-if [ "$localScriptChecksum" = "$repoScriptChecksum" ]; then
-  printf "[NONE]\n"
-else
-  printf "[AVAILABLE]\n"
-  printf "Getting updated script... "
-  # download updated script
-  if ! wget --quiet --tries=3 --timeout=10 -O "update.sh.tmp" "${server}${repoScriptName}"; then
+  ## download latest checksums
+  printf "Getting latest checksums... "
+  if ! wget --quiet --tries=3 --timeout=10 -N "${server}${checksumFilename}"; then
     errNotify
-    # delete failed download as necessary
-    rm -f ./update.sh.tmp 2>/dev/null
-    errMsg "Unable to download script update. Try again later."
+    errMsg "Unable to download checksums. Try again later."
   else
-    # verify download
-    dlScriptChecksum=$(sha256sum "update.sh.tmp" | grep -o '^\S*')
-    if ! [ "$dlScriptChecksum" = "$repoScriptChecksum" ]; then
-      printf "[ERROR]\n"
-      # delete corrupt download as necessary
+    okNotify
+  fi
+
+  ## check for updates to this script
+  printf "Checking for updates to this script... "
+  repoScriptChecksum=$(grep "$repoScriptName" "$checksumFilename" | grep -o '^\S*')
+  localScriptChecksum=$(sha256sum "$localScriptName" | grep -o '^\S*')
+  if [ "$localScriptChecksum" = "$repoScriptChecksum" ]; then
+    printf "[NONE]\n"
+  else
+    printf "[AVAILABLE]\n"
+    printf "Getting updated script... "
+    # download updated script
+    if ! wget --quiet --tries=3 --timeout=10 -O "update.sh.tmp" "${server}${repoScriptName}"; then
+      errNotify
+      # delete failed download as necessary
       rm -f ./update.sh.tmp 2>/dev/null
-      errMsg "Checksum mismatch! Try again later."
+      errMsg "Unable to download script update. Try again later."
     else
-      okNotify
-      printf "\n%s*** This script has been updated. Please re-run it to load the updated version of this file. ***%s\n\n" "$warn" "$norm"
-      # overwrite this script with updated script
-      mv -f ./update.sh.tmp "$localScriptName"
+      # verify download
+      dlScriptChecksum=$(sha256sum "update.sh.tmp" | grep -o '^\S*')
+      if ! [ "$dlScriptChecksum" = "$repoScriptChecksum" ]; then
+        printf "[ERROR]\n"
+        # delete corrupt download as necessary
+        rm -f ./update.sh.tmp 2>/dev/null
+        errMsg "Checksum mismatch! Try again later."
+      else
+        okNotify
+        printf "\n%s*** This script has been updated. Please re-run it to load the updated version of this file. ***%s\n\n" "$warn" "$norm"
+        # overwrite this script with updated script
+        mv -f ./update.sh.tmp "$localScriptName"
+      fi
     fi
   fi
-fi
 
-## update files
-while IFS='  ' read -r field1 field2; do
-  printf "\nChecking '%s' for updates... " "$field2"
-  updateFilename="$field2"
-  repoFileChecksum="$field1"
-  if [ -f "$updateFilename" ]; then
-      localFileChecksum=$(sha256sum "$updateFilename" | grep -o '^\S*')
-  else
-      localFileChecksum=0
-  fi
-
-  # update file if necessary
-  if ! [ "$localFileChecksum" = "$repoFileChecksum" ]; then
-    printf "[AVAILABLE]\n"
-    updatesAvailable=$((updatesAvailable + 1))
-    # download update
-    printf "Downloading updated '%s'... " "$updateFilename"
-    if ! wget --quiet --tries=3 --timeout=10 -O "$updateFilename.tmp" "${server}${updateFilename}"; then
-      errNotify
-      downloadFailed=$((downloadFailed + 1))
-      # delete failed download file as necessary
-      rm -f "$updateFilename.tmp" 2>&1
+  ## update files
+  while IFS='  ' read -r field1 field2; do
+    printf "\nChecking '%s' for updates... " "$field2"
+    updateFilename="$field2"
+    repoFileChecksum="$field1"
+    if [ -f "$updateFilename" ]; then
+        localFileChecksum=$(sha256sum "$updateFilename" | grep -o '^\S*')
     else
-      okNotify
-      downloadSuccess=$((downloadSuccess + 1))
-      # verify download
-      printf "Verifying '%s'... " "$updateFilename"
-      localFileChecksum=$(sha256sum "$updateFilename.tmp" | grep -o '^\S*')
-      if ! [ "$localFileChecksum" = "$repoFileChecksum" ]; then
+        localFileChecksum=0
+    fi
+
+    # update file if necessary
+    if ! [ "$localFileChecksum" = "$repoFileChecksum" ]; then
+      printf "[AVAILABLE]\n"
+      updatesAvailable=$((updatesAvailable + 1))
+      # download update
+      printf "Downloading updated '%s'... " "$updateFilename"
+      if ! wget --quiet --tries=3 --timeout=10 -O "$updateFilename.tmp" "${server}${updateFilename}"; then
         errNotify
-        updateFailed=$((updateFailed + 1))
-        # delete corrupted download file as necessary
+        downloadFailed=$((downloadFailed + 1))
+        # delete failed download file as necessary
         rm -f "$updateFilename.tmp" 2>&1
       else
         okNotify
-        updateSuccess=$((updateSuccess + 1))
-        # overwrite old version of file
-        mv -f "$updateFilename.tmp" "$updateFilename"
+        downloadSuccess=$((downloadSuccess + 1))
+        # verify download
+        printf "Verifying '%s'... " "$updateFilename"
+        localFileChecksum=$(sha256sum "$updateFilename.tmp" | grep -o '^\S*')
+        if ! [ "$localFileChecksum" = "$repoFileChecksum" ]; then
+          errNotify
+          updateFailed=$((updateFailed + 1))
+          # delete corrupted download file as necessary
+          rm -f "$updateFilename.tmp" 2>&1
+        else
+          okNotify
+          updateSuccess=$((updateSuccess + 1))
+          # overwrite old version of file
+          mv -f "$updateFilename.tmp" "$updateFilename"
+        fi
       fi
+    else
+      printf "[NONE]\n"
     fi
-  else
-    printf "[NONE]\n"
-  fi
-done <"$checksumFilename"
-
+  done <"$checksumFilename"
+fi
 
 ### display results
 printf "\n%sResults:%s\n" "$info" "$norm"
