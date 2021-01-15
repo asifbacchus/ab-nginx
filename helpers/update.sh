@@ -23,19 +23,35 @@ okNotify() {
   printf "%s[OK]%s\n" "$ok" "$norm"
 }
 
+textblock() {
+  printf "%s\n" "$1" | fold -w "$width" -s
+}
+
+textblockHeader() {
+  printf "\n%s***%s***%s\n" "$header" "$1" "$norm"
+}
+
+textblockParam() {
+  printf "%s%s%s\n" "$info" "$1" "$norm"
+}
+
 ### text formatting presets
 if command -v tput >/dev/null 2>&1; then
   err=$(tput bold)$(tput setaf 1)
   info=$(tput bold)$(tput setaf 6)
+  header=$(tput bold)$(tput setaf 5)
   norm=$(tput sgr0)
   ok=$(tput sgr0)$(tput setaf 2)
   warn=$(tput bold)$(tput setaf 3)
+  width=$(tput cols)
 else
   err=''
   info=''
+  header=''
   norm=''
   ok=''
   warn=''
+  width=80
 fi
 
 ### pre-requisites
