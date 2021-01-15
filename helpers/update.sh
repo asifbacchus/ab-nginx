@@ -35,8 +35,13 @@ textblockParam() {
   printf "%s%s%s\n" "$info" "$1" "$norm"
 }
 
+textNewline() {
+  printf "\n"
+}
+
 ### text formatting presets
 if command -v tput >/dev/null 2>&1; then
+  bold=$(tput bold)
   err=$(tput bold)$(tput setaf 1)
   info=$(tput bold)$(tput setaf 6)
   header=$(tput bold)$(tput setaf 5)
@@ -45,6 +50,7 @@ if command -v tput >/dev/null 2>&1; then
   warn=$(tput bold)$(tput setaf 3)
   width=$(tput cols)
 else
+  bold=''
   err=''
   info=''
   header=''
