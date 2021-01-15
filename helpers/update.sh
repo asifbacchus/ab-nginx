@@ -23,6 +23,20 @@ okNotify() {
   printf "%s[OK]%s\n" "$ok" "$norm"
 }
 
+scriptHelp() {
+  textNewline
+  textblock "Update ${containerName} container and helper script files"
+  textblock "${bold}Usage: ${localScriptName} [parameters]${norm}"
+  textNewline
+  textblock "If run with no parameters, the script will update both the container and the helper script files, including this update script."
+  textblockHeader " parameters "
+  textblockParam "-h|-?|--help" "Display this help screen."
+  textblockParam "-c|--container|--container-only" "Update the docker container only."
+  textblockParam "-s|--scripts|--scripts-only" "Update the helper scripts (including this update script) only."
+  textNewline
+  exit 0
+}
+
 textblock() {
   printf "%s\n" "$1" | fold -w "$width" -s
 }
@@ -94,7 +108,6 @@ while [ $# -gt 0 ]; do
   case "$1" in
     -h|-\?|--help)
       # display inline help
-      # TODO: create script help function
       scriptHelp
       ;;
     -s|--scripts|--scripts-only)
