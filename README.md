@@ -34,9 +34,13 @@ Check out the [repo wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki) f
 
 The container does **NOT** run under the root account. It runs under a user named *www-docker* with a UID of 8080. **This means any files you mount into the container need to be readable (and/or writable depending on your use-case) by UID 8080**. This does not mean just content files, it also includes configurations, server-blocks and *certificates*! Before mounting your files, ensure this is the case. There are more detailed instructions in the [wiki](https://git.asifbacchus.app/ab-docker/ab-nginx/wiki) if you need help setting file permissions.
 
-This is a significant change versus most other NGINX implementations/containers where the main process is run as root and the *worker processes* run as a limited user. In those cases, permissions don’t matter since NGINX can always use the root account to read any files (and especially certificates!) it needs. Please understand this difference.
+This is a significant change versus most other NGINX implementations/containers where the main process is run as root
+and the *worker processes* run as a limited user. In those cases, permissions don’t matter since NGINX can always use
+the root account to read any files (and especially certificates!) it needs. Please understand this difference.
 
-If you need to change the UID, then you’ll need to rebuild the container using the [Dockerfile in the git repo](#https://git.asifbacchus.app/ab-docker/ab-nginx). The process would be something like this:
+If you need to change the UID, then you’ll need to rebuild the container using
+the [Dockerfile in the git repo](https://git.asifbacchus.app/ab-docker/ab-nginx). The process would be something like
+this:
 
 ```bash
 # clone the repo
