@@ -43,7 +43,7 @@ HEALTHCHECK \
     CMD curl --fail http://127.0.0.1:9000/nginx_status || exit 1
 
 # standardized labels
-MAINTAINER "Asif Bacchus <asif@bacchus.cloud>"
+MAINTAINER Asif Bacchus <asif@bacchus.cloud>
 LABEL maintainer="Asif Bacchus <asif@bacchus.cloud>"
 LABEL org.opencontainers.image.author="Asif Bacchus <asif@bacchus.cloud>"
 LABEL org.opencontainers.image.url="https://git.asifbacchus.app/ab-docker/ab-nginx"
