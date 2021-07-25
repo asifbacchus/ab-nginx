@@ -81,8 +81,8 @@ CMD [ "nginx", "-g", "daemon off;" ]
 
 # add build date and version labels
 ARG BUILD_DATE
-LABEL org.opencontainers.image.version="1.19.9"
-LABEL app.asifbacchus.docker.internalVersion="4.0-1.19.9"
+LABEL org.opencontainers.image.version="1.21.1"
+LABEL app.asifbacchus.docker.internalVersion="5.0-1.21.1"
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 
 #EOF
