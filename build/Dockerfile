@@ -26,7 +26,7 @@ RUN apk --no-cache add libcap \
     && setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx \
     && cd /usr/share/nginx \
     && rm -rf html/* \
-    && wget -O /tmp/errorpages.tar.gz https://git.asifbacchus.app/asif/fun-errorpages/archive/v1.0.tar.gz \
+    && wget -O /tmp/errorpages.tar.gz https://git.asifbacchus.dev/asif/fun-errorpages/archive/v1.0.tar.gz \
     && tar -xzf /tmp/errorpages.tar.gz -C /tmp \
     && mv /tmp/fun-errorpages/errorpages ./ \
     && rm -rf /tmp/* \
@@ -46,9 +46,9 @@ HEALTHCHECK \
 MAINTAINER Asif Bacchus <asif@bacchus.cloud>
 LABEL maintainer="Asif Bacchus <asif@bacchus.cloud>"
 LABEL org.opencontainers.image.author="Asif Bacchus <asif@bacchus.cloud>"
-LABEL org.opencontainers.image.url="https://git.asifbacchus.app/ab-docker/ab-nginx"
-LABEL org.opencontainers.image.documentation="https://git.asifbacchus.app/ab-docker/ab-nginx/wiki"
-LABEL org.opencontainers.image.source="https://git.asifbacchus.app/ab-docker/ab-nginx.git"
+LABEL org.opencontainers.image.url="https://git.asifbacchus.dev/ab-docker/ab-nginx"
+LABEL org.opencontainers.image.documentation="https://git.asifbacchus.dev/ab-docker/ab-nginx/wiki"
+LABEL org.opencontainers.image.source="https://git.asifbacchus.dev/ab-docker/ab-nginx.git"
 LABEL org.opencontainers.image.vendor="NGINX"
 LABEL org.opencontainers.image.title="ab-nginx"
 LABEL org.opencontainers.image.description="NGINX-mainline-alpine with more logical file location layout and automatic SSL set up if certificates are provided."
