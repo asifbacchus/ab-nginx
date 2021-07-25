@@ -1,10 +1,11 @@
 FROM nginx:mainline-alpine
 
-# default uid for nginx user
+# default uid and gid for nginx user
 ARG UID=8080
+ARG GID=8080
 
 # create nginx user
-RUN addgroup --gid ${UID} www-docker \
+RUN addgroup --gid ${GID} www-docker \
     && adduser \
         -S \
         -h /home/www-docker \
