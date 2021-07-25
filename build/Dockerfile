@@ -1,4 +1,10 @@
-FROM nginx:mainline-alpine
+#
+# build AB-NGINX container (based on NGINX mainline)
+#
+
+ARG NGINX_VERSION=1.21.1
+FROM nginx:${NGINX_VERSION}-alpine
+ARG NGINX_VERSION
 
 # default uid and gid for nginx user
 ARG UID=8080
@@ -86,8 +92,11 @@ CMD [ "nginx", "-g", "daemon off;" ]
 
 # add build date and version labels
 ARG BUILD_DATE
-LABEL org.opencontainers.image.version="1.21.1"
-LABEL app.asifbacchus.docker.internalVersion="5.0-1.21.1"
+ARG GIT_COMMIT
+ARG INTERNAL_VERSION
+LABEL org.opencontainers.image.revision=${GIT_COMMIT}
+LABEL org.opencontainers.image.version=${NGINX_VERSION}
+LABEL app.asifbacchus.docker.internalVersion=${INTERNAL_VERSION}-${NGINX_VERSION}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 
 #EOF
