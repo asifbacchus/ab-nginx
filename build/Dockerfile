@@ -29,7 +29,11 @@ RUN apk --no-cache add libcap \
     && mkdir /usr/share/nginx/letsencrypt
 
 # health check
-HEALTHCHECK --interval=60s --timeout=5s --start-period=30s --retries=3 \
+HEALTHCHECK \
+    --interval=10s \
+    --timeout=5s \
+    --start-period=60s \
+    --retries=3 \
     CMD curl --fail http://127.0.0.1:9000/nginx_status || exit 1
 
 # standardized labels
