@@ -22,7 +22,9 @@ RUN addgroup --gid ${GID} www-docker \
         www-docker
 
 # add libcap, allow nginx to bind to ports <1024, extract fun error pages & create LetsEncrypt challenge directory outside webroot
-RUN apk --no-cache add libcap \
+RUN apk --update --no-cache add \
+    libcap \
+    openssl \
     && setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx \
     && cd /usr/share/nginx \
     && rm -rf html/* \

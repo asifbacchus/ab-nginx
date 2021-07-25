@@ -54,8 +54,20 @@ fi
 if [ -f "/certs/fullchain.pem" ]; then
     # activate SSL configuration as appropriate and only if certs exist
     if [ "$TLS13_ONLY" = 'FALSE' ]; then
-        if [ -f "/certs/fullchain.pem" ] && [ -f "/certs/privkey.pem" ] && [ -f "/certs/chain.pem" ] && [ -f "/certs/dhparam.pem" ]; then
+        if [ -f "/certs/fullchain.pem" ] && [ -f "/certs/privkey.pem" ] && [ -f "/certs/chain.pem" ]; then
             printf "Certificates found. Securing deployment using TLS 1.2\n"
+
+            # check for dhparam file and generate, if necessary
+            if ! [ -f "/certs/dhparam.pem" ]; then
+                printf "Diffie-Hellman Parameters not found... generating (using Digital Signature Algorithm instead of Diffie-Hellman)...\n"
+                if ! openssl dhparam -dsaparam -out /certs/dhparam.pem 4096; then
+                    printf "\n\nUnable to generate 'dhparam.pem'. Is your '/certs' directory writable by this container?\n"
+                    printf "TLS version 1.2 requires DHParams (or DSAParams) in order to function securely. Exiting.\n\n"
+                    exit 101
+                fi
+            printf "\nDSA-Params generated successfully\n"
+            fi
+
             # activate shared SSL configuration file
             if [ -f "/etc/nginx/ssl-config/mozIntermediate_ssl.conf.disabled" ]; then
                 mv /etc/nginx/ssl-config/mozIntermediate_ssl.conf.disabled \
