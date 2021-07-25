@@ -123,4 +123,11 @@ fi
 printf "\nSetup complete...Container ready...\n"
 exec "$@"
 
+
+# exit return codes
+# 10x       certificate generation errors
+#   101     unable to generate DSA-parameters
+#   102     unable to generate private key
+#   103     unable to generate self-signed certificate
+
 #EOF
