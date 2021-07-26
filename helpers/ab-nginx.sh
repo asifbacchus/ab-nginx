@@ -231,7 +231,7 @@ if [ -z "$SSL_CERT" ]; then
       --network=${NETWORK} \
       -p ${HTTP_PORT}:80 \
       --restart unless-stopped \
-      docker.asifbacchus.dev/nginx/ab-nginx:latest
+      docker.asifbacchus.dev/nginx/ab-nginx:${TAG:-latest}
   fi
 # run with TLS
 else
@@ -251,7 +251,7 @@ else
           -v "$SSL_KEY":/certs/privkey.pem:ro \
           -v "$SSL_CHAIN":/certs/chain.pem:ro \
           -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
-          docker.asifbacchus.dev/nginx/ab-nginx:latest /bin/sh
+          docker.asifbacchus.dev/nginx/ab-nginx:${TAG:-latest} /bin/sh
     else
         if [ "$TLS13_ONLY" = 'FALSE' ]; then
             printf "%s\nRunning NGINX on %s (TLS 1.2)...%s\n" "$cyan" "$container_name" "$norm"
@@ -269,7 +269,7 @@ else
           -v "$SSL_CHAIN":/certs/chain.pem:ro \
           -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
           --restart unless-stopped \
-          docker.asifbacchus.dev/nginx/ab-nginx:latest
+          docker.asifbacchus.dev/nginx/ab-nginx:${TAG:-latest}
     fi
 fi
 
