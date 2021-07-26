@@ -67,10 +67,10 @@ scriptHelp() {
   textblock "Change the name of the container. This is cosmetic and does not affect operation in any way."
   newline
   textblockParam '-s|--shell' 'off: run in detached mode'
-  textblock "Enter the container using an interactive POSIX shell. This happens after startup operations but *before* nginx is actually started. This is a great way to see configuration changes possibly stopping nginx from starting normally."
+  textblock "Enter the container using an interactive ASH/BusyBox shell. This happens after startup operations but *before* nginx is actually started. This is a great way to see configuration changes possibly stopping nginx from starting normally."
   printf "%s" "$yellow"
   newline
-  textblock "More information can be found at: https://git.asifbacchus.app/ab-docker/ab-nginx/wiki"
+  textblock "More information can be found at: https://git.asifbacchus.dev/ab-docker/ab-nginx/wiki"
   printf "%s%1000s\n" "$magenta" | tr " " "-" | cut -c -$width
   exit 0
 }
@@ -218,7 +218,7 @@ if [ -z "$SSL_CERT" ]; then
       $vmount \
       --network=${NETWORK} \
       -p ${HTTP_PORT}:80 \
-      docker.asifbacchus.app/nginx/ab-nginx:latest /bin/sh
+      docker.asifbacchus.dev/nginx/ab-nginx:latest /bin/sh
   else
     # exec normally
     printf "%s\nRunning NGINX on %s...%s\n" "$cyan" "$container_name" "$norm"
@@ -229,7 +229,7 @@ if [ -z "$SSL_CERT" ]; then
       --network=${NETWORK} \
       -p ${HTTP_PORT}:80 \
       --restart unless-stopped \
-      docker.asifbacchus.app/nginx/ab-nginx:latest
+      docker.asifbacchus.dev/nginx/ab-nginx:latest
   fi
 # run with TLS1.2
 elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'FALSE' ]; then
@@ -246,7 +246,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'FALSE' ]; then
       -v "$SSL_CHAIN":/certs/chain.pem:ro \
       -v "$DH":/certs/dhparam.pem:ro \
       -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
-      docker.asifbacchus.app/nginx/ab-nginx:latest /bin/sh
+      docker.asifbacchus.dev/nginx/ab-nginx:latest /bin/sh
   else
     # exec normally
     printf "%s\nRunning NGINX on %s (TLS 1.2)...%s\n" "$cyan" "$container_name" "$norm"
@@ -261,7 +261,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'FALSE' ]; then
       -v "$DH":/certs/dhparam.pem:ro \
       -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
       --restart unless-stopped \
-      docker.asifbacchus.app/nginx/ab-nginx:latest
+      docker.asifbacchus.dev/nginx/ab-nginx:latest
   fi
 # run with TLS1.3
 elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'TRUE' ]; then
@@ -277,7 +277,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'TRUE' ]; then
       -v "$SSL_KEY":/certs/privkey.pem:ro \
       -v "$SSL_CHAIN":/certs/chain.pem:ro \
       -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
-      docker.asifbacchus.app/nginx/ab-nginx:latest /bin/sh
+      docker.asifbacchus.dev/nginx/ab-nginx:latest /bin/sh
   else
     # exec normally
     printf "%s\nRunning NGINX on %s (TLS 1.3)...%s\n" "$cyan" "$container_name" "$norm"
@@ -291,7 +291,7 @@ elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'TRUE' ]; then
       -v "$SSL_CHAIN":/certs/chain.pem:ro \
       -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
       --restart unless-stopped \
-      docker.asifbacchus.app/nginx/ab-nginx:latest
+      docker.asifbacchus.dev/nginx/ab-nginx:latest
   fi
 fi
 
