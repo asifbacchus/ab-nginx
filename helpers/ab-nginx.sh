@@ -209,9 +209,10 @@ docker network inspect ${NETWORK} >/dev/null 2>&1 ||
 
 # run without TLS
 if [ -z "$SSL_CERT" ]; then
-  if [ $shell = 'true' ]; then
+  if [ "$shell" = 'true' ]; then
     # exec shell
     printf "%s\nRunning SHELL on %s...%s\n" "$cyan" "$container_name" "$norm"
+    # shellcheck disable=SC2086
     docker run --rm -it --name "${container_name}" \
       --env-file ab-nginx.params \
       -e SERVER_NAMES="$HOSTNAMES" \
@@ -222,6 +223,7 @@ if [ -z "$SSL_CERT" ]; then
   else
     # exec normally
     printf "%s\nRunning NGINX on %s...%s\n" "$cyan" "$container_name" "$norm"
+    # shellcheck disable=SC2086
     docker run -d --name "${container_name}" \
       --env-file ab-nginx.params \
       -e SERVER_NAMES="$HOSTNAMES" \
@@ -231,68 +233,44 @@ if [ -z "$SSL_CERT" ]; then
       --restart unless-stopped \
       docker.asifbacchus.dev/nginx/ab-nginx:latest
   fi
-# run with TLS1.2
-elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'FALSE' ]; then
-  if [ $shell = 'true' ]; then
-    # exec shell
-    printf "%s\nRunning SHELL on %s (TLS 1.2)...%s\n" "$cyan" "$container_name" "$norm"
-    docker run --rm -it --name "${container_name}" \
-      --env-file ab-nginx.params \
-      -e SERVER_NAMES="$HOSTNAMES" \
-      $vmount \
-      --network=${NETWORK} \
-      -v "$SSL_CERT":/certs/fullchain.pem:ro \
-      -v "$SSL_KEY":/certs/privkey.pem:ro \
-      -v "$SSL_CHAIN":/certs/chain.pem:ro \
-      -v "$DH":/certs/dhparam.pem:ro \
-      -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
-      docker.asifbacchus.dev/nginx/ab-nginx:latest /bin/sh
-  else
-    # exec normally
-    printf "%s\nRunning NGINX on %s (TLS 1.2)...%s\n" "$cyan" "$container_name" "$norm"
-    docker run -d --name "${container_name}" \
-      --env-file ab-nginx.params \
-      -e SERVER_NAMES="$HOSTNAMES" \
-      $vmount \
-      --network=${NETWORK} \
-      -v "$SSL_CERT":/certs/fullchain.pem:ro \
-      -v "$SSL_KEY":/certs/privkey.pem:ro \
-      -v "$SSL_CHAIN":/certs/chain.pem:ro \
-      -v "$DH":/certs/dhparam.pem:ro \
-      -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
-      --restart unless-stopped \
-      docker.asifbacchus.dev/nginx/ab-nginx:latest
-  fi
-# run with TLS1.3
-elif [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'TRUE' ]; then
-  if [ $shell = 'true' ]; then
-    # exec shell
-    printf "%s\nRunning SHELL on %s (TLS 1.3)...%s\n" "$cyan" "$container_name" "$norm"
-    docker run --rm -it --name "${container_name}" \
-      --env-file ab-nginx.params \
-      -e SERVER_NAMES="$HOSTNAMES" \
-      $vmount \
-      --network=${NETWORK} \
-      -v "$SSL_CERT":/certs/fullchain.pem:ro \
-      -v "$SSL_KEY":/certs/privkey.pem:ro \
-      -v "$SSL_CHAIN":/certs/chain.pem:ro \
-      -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
-      docker.asifbacchus.dev/nginx/ab-nginx:latest /bin/sh
-  else
-    # exec normally
-    printf "%s\nRunning NGINX on %s (TLS 1.3)...%s\n" "$cyan" "$container_name" "$norm"
-    docker run -d --name "${container_name}" \
-      --env-file ab-nginx.params \
-      -e SERVER_NAMES="$HOSTNAMES" \
-      $vmount \
-      --network=${NETWORK} \
-      -v "$SSL_CERT":/certs/fullchain.pem:ro \
-      -v "$SSL_KEY":/certs/privkey.pem:ro \
-      -v "$SSL_CHAIN":/certs/chain.pem:ro \
-      -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
-      --restart unless-stopped \
-      docker.asifbacchus.dev/nginx/ab-nginx:latest
-  fi
+# run with TLS
+else
+    if [ "$shell" = 'true' ]; then
+        if [ "$TLS13_ONLY" = 'FALSE' ]; then
+            printf "%s\nRunning SHELL on %s (TLS 1.2)...%s\n" "$cyan" "$container_name" "$norm"
+        else
+            printf "%s\nRunning SHELL on %s (TLS 1.3)...%s\n" "$cyan" "$container_name" "$norm"
+        fi
+        # shellcheck disable=SC2086
+        docker run --rm -it --name "${container_name}" \
+          --env-file ab-nginx.params \
+          -e SERVER_NAMES="$HOSTNAMES" \
+          $vmount \
+          --network=${NETWORK} \
+          -v "$SSL_CERT":/certs/fullchain.pem:ro \
+          -v "$SSL_KEY":/certs/privkey.pem:ro \
+          -v "$SSL_CHAIN":/certs/chain.pem:ro \
+          -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
+          docker.asifbacchus.dev/nginx/ab-nginx:latest /bin/sh
+    else
+        if [ "$TLS13_ONLY" = 'FALSE' ]; then
+            printf "%s\nRunning NGINX on %s (TLS 1.2)...%s\n" "$cyan" "$container_name" "$norm"
+        else
+            printf "%s\nRunning NGINX on %s (TLS 1.3)...%s\n" "$cyan" "$container_name" "$norm"
+        fi
+        # shellcheck disable=SC2086
+        docker run -d --name "${container_name}" \
+          --env-file ab-nginx.params \
+          -e SERVER_NAMES="$HOSTNAMES" \
+          $vmount \
+          --network=${NETWORK} \
+          -v "$SSL_CERT":/certs/fullchain.pem:ro \
+          -v "$SSL_KEY":/certs/privkey.pem:ro \
+          -v "$SSL_CHAIN":/certs/chain.pem:ro \
+          -p ${HTTP_PORT}:80 -p ${HTTPS_PORT}:443 \
+          --restart unless-stopped \
+          docker.asifbacchus.dev/nginx/ab-nginx:latest
+    fi
 fi
 
 ### exit gracefully
