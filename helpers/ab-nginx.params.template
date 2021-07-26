@@ -89,7 +89,7 @@
 # Only files with a ".conf" extension will be loaded!  If you want to disable a
 # file, simply change its extension (i.e. '.conf.disabled').
 #
-# REMEMBER: Your configuration files must be readable by UID 8080!
+# REMEMBER: Your configuration files must be readable by the container UID/GID!
 CONFIG_DIR=$(pwd)/config
 
 # Specify a directory containing your NGINX server-block configurations (if any)
@@ -103,7 +103,7 @@ CONFIG_DIR=$(pwd)/config
 # Only files with a ".conf" extension will be loaded!  If you want to disable a
 #   file, simply change its extension (i.e. '.conf.disabled').
 #
-# REMEMBER: Your server-block files must be readable by UID 8080!
+# REMEMBER: Your server-block files must be readable by the container UID/GID!
 SERVERS_DIR=$(pwd)/sites
 
 # Specify a directory containing 'snippets' of NGINX code you want/need to
@@ -114,11 +114,11 @@ SERVERS_DIR=$(pwd)/sites
 # instead of having to type the same thing many times.
 
 # This is totally optional! Comment this variable to disable it.
-# REMEMBER: Your snippets must be readable by UID 8080!
+# REMEMBER: Your snippets must be readable by the container UID/GID!
 SNIPPETS_DIR=$(pwd)/snippets
 
 # Specify a directory with the content you want to serve.
-# REMEMBER: This directory must be readable by UID 8080!
+# REMEMBER: This directory must be readable by the container UID/GID!
 WEBROOT_DIR=/var/www
 
 
@@ -143,14 +143,12 @@ WEBROOT_DIR=/var/www
 # Certificate files
 #
 # If you are mounting symlinks you MUST specify the full path of the symlink so
-# the target is resolved! DH (Diffie-Hellman Parameters file) is only required
-# if using TLS 1.2.
+# the target is resolved!
 #
-# REMEMBER: ALL files must be readble by UID 8080!
+# REMEMBER: ALL files must be readable by container UID/GID!
 #SSL_CERT=/path/to/your/ssl-certificate/fullchain.pem
 #SSL_KEY=/path/to/your/ssl-private-key/privkey.pem
 #SSL_CHAIN=/path/to/your/ssl-certificate-chain/chain.pem
-#DH=/path/to/your/diffie-hellman-parameters-file/dhparam.pem
 
 
 #EOF
