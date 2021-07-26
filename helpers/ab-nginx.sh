@@ -22,7 +22,7 @@ else
 fi
 
 ### parameter defaults
-shell=false
+doShell=false
 container_name="ab-nginx"
 NETWORK='nginx_network'
 SUBNET='172.31.254.0/24'
@@ -179,7 +179,7 @@ while [ $# -gt 0 ]; do
     ;;
   -s | --shell)
     # start shell instead of default CMD
-    shell=true
+    doShell=true
     ;;
   -n | --name)
     # container name
@@ -209,7 +209,7 @@ docker network inspect ${NETWORK} >/dev/null 2>&1 ||
 
 # run without TLS
 if [ -z "$SSL_CERT" ]; then
-  if [ "$shell" = 'true' ]; then
+  if [ "$doShell" = 'true' ]; then
     # exec shell
     printf "%s\nRunning SHELL on %s...%s\n" "$cyan" "$container_name" "$norm"
     # shellcheck disable=SC2086
@@ -235,7 +235,7 @@ if [ -z "$SSL_CERT" ]; then
   fi
 # run with TLS
 else
-    if [ "$shell" = 'true' ]; then
+    if [ "$doShell" = 'true' ]; then
         if [ "$TLS13_ONLY" = 'FALSE' ]; then
             printf "%s\nRunning SHELL on %s (TLS 1.2)...%s\n" "$cyan" "$container_name" "$norm"
         else
