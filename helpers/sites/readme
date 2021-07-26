@@ -1,11 +1,11 @@
 - Place all your server block configuration files in this directory
 - This path should be bind-mounted to the container at:
   '/etc/nginx/sites'
-    - this bind-mount will override the test pages included in the container by 
-        default.
+    - this bind-mount will override the default server configurations
+        included in the container by default.
 - All files should begin in the 'server' configuration context
 - ONLY files that end with '.conf' will be processed!
-    - if you want to keep a file for reference or disable it temporarily, 
+    - if you want to keep a file for reference or disable it temporarily,
         simply change the extension.  I like using '.conf.disabled'.
-- If you don't want to use this directory, you can bind-mount any other 
+- If you don't want to use this directory, you can bind-mount any other
   directory you want to '/etc/nginx/sites/'
