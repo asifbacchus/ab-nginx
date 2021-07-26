@@ -90,8 +90,8 @@ updateSuccess=0
 # reference constants
 dockerNamespace='nginx'
 containerName='ab-nginx'
-containerUpdatePath="docker.asifbacchus.app/$dockerNamespace/$containerName:latest"
-server="https://asifbacchus.app/updates/docker/$dockerNamespace/$containerName/"
+containerUpdatePath="docker.asifbacchus.dev/$dockerNamespace/$containerName:latest"
+server="https://asifbacchus.dev/public/docker/$dockerNamespace/$containerName/"
 checksumFilename='checksums.sha256'
 
 # operation triggers
