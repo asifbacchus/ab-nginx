@@ -17,10 +17,11 @@
 # ensure the container can read and/or write to locations on the host or
 # has access to files shared between members of a container stack.
 # REQUIRED: NO
-# DEFAULT: UID=8080, GID=8080
+# DEFAULT: NGINX_UID=8080, NGINX_GID=8080
 # VALID OPTIONS: any permissible and available UID/GID value
-#UID=8080
-#GID=8080
+#NGINX_UID=8080
+#NGINX_GID=8080
+
 
 #
 # Network options

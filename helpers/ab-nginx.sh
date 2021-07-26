@@ -218,6 +218,7 @@ if [ -z "$SSL_CERT" ]; then
         # shellcheck disable=SC2086
         docker run --rm -it --name "${container_name}" \
             --env-file ab-nginx.params \
+            --user="${NGINX_UID:-8080}:${NGINX_GID:-8080}" \
             -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
             --network=${NETWORK} \
@@ -229,6 +230,7 @@ if [ -z "$SSL_CERT" ]; then
         # shellcheck disable=SC2086
         docker run -d --name "${container_name}" \
             --env-file ab-nginx.params \
+            --user="${NGINX_UID:-8080}:${NGINX_GID:-8080}" \
             -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
             --network=${NETWORK} \
@@ -247,6 +249,7 @@ else
         # shellcheck disable=SC2086
         docker run --rm -it --name "${container_name}" \
             --env-file ab-nginx.params \
+            --user="${NGINX_UID:-8080}:${NGINX_GID:-8080}" \
             -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
             --network=${NETWORK} \
@@ -264,6 +267,7 @@ else
         # shellcheck disable=SC2086
         docker run -d --name "${container_name}" \
             --env-file ab-nginx.params \
+            --user="${NGINX_UID:-8080}:${NGINX_GID:-8080}" \
             -e SERVER_NAMES="$HOSTNAMES" \
             $vmount \
             --network=${NETWORK} \
