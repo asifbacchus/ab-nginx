@@ -1,0 +1,16 @@
+default_bits = 4096
+default_md = sha256
+distinguished_name = dn
+req_extensions = san
+x509_extensions = san
+prompt = no
+
+[dn]
+organizationName = AB-NGINX Webserver
+CN = {CERT_HOSTNAME}
+
+[san]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = {CERT_HOSTNAME}

@@ -55,8 +55,10 @@ LABEL org.opencontainers.image.vendor="NGINX"
 LABEL org.opencontainers.image.title="ab-nginx"
 LABEL org.opencontainers.image.description="NGINX-mainline-alpine with more logical file location layout and automatic SSL set up if certificates are provided."
 
-# copy configuration files
-COPY entrypoint.sh /entrypoint.sh
+# copy configuration files and utility scripts
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY generate-cert.sh /usr/local/bin/generate-cert
+COPY selfsigned.cnf /etc/selfsigned.cnf
 COPY config /etc/nginx/
 COPY sites /etc/nginx/sites/
 COPY webroot /usr/share/nginx/html/
@@ -72,7 +74,9 @@ RUN chown -R www-docker:www-docker /usr/share/nginx \
     && find /etc/nginx -type d -exec chmod 750 {} \; \
     && find /etc/nginx -type f -exec chmod 640 {} \; \
     && chown www-docker:www-docker /var/cache/nginx \
-    && chown www-docker:www-docker /var/log/nginx
+    && chown www-docker:www-docker /var/log/nginx \
+    && chmod 644 /etc/selfsigned.cnf \
+    && chmod 755 /usr/local/bin/generate-cert /usr/local/bin/entrypoint.sh
 USER www-docker
 WORKDIR /usr/share/nginx/html
 
@@ -86,7 +90,7 @@ ENV HSTS=FALSE
 ENV TLS13_ONLY=FALSE
 
 # entrypoint script
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
 
 # run NGINX by default
 STOPSIGNAL SIGQUIT
