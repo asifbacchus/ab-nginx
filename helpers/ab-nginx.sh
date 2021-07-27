@@ -4,6 +4,8 @@
 # start ab-nginx container using params file variables
 #
 
+# TODO: add error trapping on docker run statements
+
 # text formatting presets
 if command -v tput >/dev/null; then
     cyan=$(tput bold)$(tput setaf 6)
@@ -86,7 +88,7 @@ scriptHelp() {
     textBlockParam '--stop'
     textBlock "Stops the container specified by the '--name' parameter or with the default name 'ab-nginx'."
     newline
-    textBlockParam '--remove | --stopremvoe'
+    textBlockParam '--remove | --stop-remove'
     textBlock "Stops and removes the container specified by the '--name' parameter or with the default name 'ab-nginx'."
 
     # footer
@@ -212,7 +214,7 @@ while [ $# -gt 0 ]; do
         # stop named container
         doStop=true
         ;;
-    --remove | --stopremove)
+    --remove | --stop-remove)
         # stop and remove named container
         doStop=true
         removeStopped=true
