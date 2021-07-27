@@ -25,6 +25,7 @@ fi
 
 ### parameter defaults
 doShell=false
+doStatus=false
 container_name="ab-nginx"
 NETWORK='nginx_network'
 SUBNET='172.31.254.0/24'
@@ -69,8 +70,11 @@ scriptHelp() {
     textBlockParam '-n|--name' 'ab-nginx'
     textBlock "Set the name of the container, otherwise the default will be used."
     newline
-    textBlockParam'-s|--shell' 'off: run in detached mode'
+    textBlockParam '-s|--shell' 'off: run in detached mode'
     textBlock "Enter the container using an interactive ASH/BusyBox shell. This happens after startup operations but *before* nginx is actually started. This is a great way to see configuration changes possibly stopping nginx from starting normally."
+    newline
+    textBlockParam '--status'
+    textBlock "Run a search for all AB-NGINX containers and display their name and status."
     printf "%s" "$yellow"
     newline
     textBlock"More information can be found at: https://git.asifbacchus.dev/ab-docker/ab-nginx/wiki"
@@ -185,6 +189,10 @@ while [ $# -gt 0 ]; do
         container_name="$2"
         shift
         ;;
+    --status)
+        # find containers and check their status
+        doStatus=true
+        ;;
     *)
         printf "%s\nUnknown option: %s\n" "$err" "$1"
         printf "Use '--help' for valid options.\n\n%s" "$norm"
@@ -193,6 +201,15 @@ while [ $# -gt 0 ]; do
     esac
     shift
 done
+
+#
+# status check
+if [ "$doStatus" = "true" ]; then
+    printf "\nFound the following AB-NGINX containers:\n"
+    docker ps -a --filter "label=dev.asifbacchus.docker.internalName=ab-nginx"
+    printf "\n"
+    exit 0
+fi
 
 # create network if it doesn't already exist
 docker network inspect ${NETWORK} >/dev/null 2>&1 ||
