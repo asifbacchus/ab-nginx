@@ -47,6 +47,7 @@ HEALTHCHECK \
 # standardized labels
 MAINTAINER Asif Bacchus <asif@bacchus.cloud>
 LABEL maintainer="Asif Bacchus <asif@bacchus.cloud>"
+LABEL dev.asifbacchus.docker.internalName="ab-nginx"
 LABEL org.opencontainers.image.author="Asif Bacchus <asif@bacchus.cloud>"
 LABEL org.opencontainers.image.url="https://git.asifbacchus.dev/ab-docker/ab-nginx"
 LABEL org.opencontainers.image.documentation="https://git.asifbacchus.dev/ab-docker/ab-nginx/wiki"
@@ -102,7 +103,7 @@ ARG GIT_COMMIT
 ARG INTERNAL_VERSION
 LABEL org.opencontainers.image.revision=${GIT_COMMIT}
 LABEL org.opencontainers.image.version=${NGINX_VERSION}
-LABEL app.asifbacchus.docker.internalVersion=${INTERNAL_VERSION}-${NGINX_VERSION}
+LABEL dev.asifbacchus.docker.internalVersion=${INTERNAL_VERSION}-${NGINX_VERSION}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 
 #EOF
