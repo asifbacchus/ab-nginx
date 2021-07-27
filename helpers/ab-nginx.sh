@@ -4,8 +4,6 @@
 # start ab-nginx container using params file variables
 #
 
-# TODO: add error trapping on docker run statements
-
 #
 # text formatting presets
 if command -v tput >/dev/null; then
@@ -358,8 +356,8 @@ else
 fi
 
 #
-# exit gracefully
-exit 0
+# exit with code from docker
+exit "$?"
 
 #
 # exit return codes
@@ -371,5 +369,6 @@ exit 0
 #   11      no container found with specified name
 #   12      unable to stop container
 #   13      unable to remove container
+# other     refer to docker exit codes
 
 #EOF
