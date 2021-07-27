@@ -65,7 +65,7 @@ scriptHelp() {
     textblockParam 'parameter in cyan' 'default in yellow'
     newline
     textblockParam '-n|--name' 'ab-nginx'
-    textblock "Change the name of the container. This is cosmetic and does not affect operation in any way."
+    textblock "Set the name of the container, otherwise the default will be used."
     newline
     textblockParam '-s|--shell' 'off: run in detached mode'
     textblock "Enter the container using an interactive ASH/BusyBox shell. This happens after startup operations but *before* nginx is actually started. This is a great way to see configuration changes possibly stopping nginx from starting normally."
