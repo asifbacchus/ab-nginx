@@ -54,24 +54,24 @@ scriptHelp() {
     printf "\n%s" "$magenta"
     printf '%.0s-' $(seq "$width")
     printf "\n%s" "$norm"
-    textblock "This is a simple helper script so you can avoid typing lengthy commands when working with the ab-nginx container."
-    textblock "The script reads the contents of 'ab-nginx.params' and constructs various 'docker run' commands based on that file. The biggest time-saver is working with certificates. If they are specified in the params file, the script will automatically bind-mount them so nginx serves content via SSL by default."
+    textBlock "This is a simple helper script so you can avoid typing lengthy commands when working with the ab-nginx container."
+    textBlock "The script reads the contents of 'ab-nginx.params' and constructs various 'docker run' commands based on that file. The biggest time-saver is working with certificates. If they are specified in the params file, the script will automatically bind-mount them so nginx serves content via SSL by default."
     newline
-    textblock "If you run the script with no parameters, it will execute the container 'normally': Run in detached mode with nginx automatically launched. If you specified certificates, nginx will serve over SSL by default."
-    textblock "Note: Containers (except shell) are always set to restart 'unless-stopped'. You must remove them manually if desired."
+    textBlock "If you run the script with no parameters, it will execute the container 'normally': Run in detached mode with nginx automatically launched. If you specified certificates, nginx will serve over SSL by default."
+    textBlock "Note: Containers (except shell) are always set to restart 'unless-stopped'. You must remove them manually if desired."
     printf "%s" "$magenta"
     newline
-    textblock "The script has the following (optional) parameters:"
-    textblockParam 'parameter in cyan' 'default in yellow'
+    textBlock "The script has the following (optional) parameters:"
+    textBlockParam 'parameter in cyan' 'default in yellow'
     newline
-    textblockParam '-n|--name' 'ab-nginx'
-    textblock "Set the name of the container, otherwise the default will be used."
+    textBlockParam '-n|--name' 'ab-nginx'
+    textBlock "Set the name of the container, otherwise the default will be used."
     newline
-    textblockParam '-s|--shell' 'off: run in detached mode'
-    textblock "Enter the container using an interactive ASH/BusyBox shell. This happens after startup operations but *before* nginx is actually started. This is a great way to see configuration changes possibly stopping nginx from starting normally."
+    textBlockParam'-s|--shell' 'off: run in detached mode'
+    textBlock "Enter the container using an interactive ASH/BusyBox shell. This happens after startup operations but *before* nginx is actually started. This is a great way to see configuration changes possibly stopping nginx from starting normally."
     printf "%s" "$yellow"
     newline
-    textblock "More information can be found at: https://git.asifbacchus.dev/ab-docker/ab-nginx/wiki"
+    textBlock"More information can be found at: https://git.asifbacchus.dev/ab-docker/ab-nginx/wiki"
     printf "\n%s" "$magenta"
     printf '%.0s-' $(seq "$width")
     printf "\n%s" "$norm"
@@ -82,11 +82,11 @@ newline() {
     printf "\n"
 }
 
-textblock() {
+textBlock() {
     printf "%s\n" "$1" | fold -w "$width" -s
 }
 
-textblockParam() {
+textBlockParam() {
     if [ -z "$2" ]; then
         # no default
         printf "%s%s%s\n" "$cyan" "$1" "$norm"
