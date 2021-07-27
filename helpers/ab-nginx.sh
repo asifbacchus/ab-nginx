@@ -6,6 +6,7 @@
 
 # TODO: add error trapping on docker run statements
 
+#
 # text formatting presets
 if command -v tput >/dev/null; then
     cyan=$(tput bold)$(tput setaf 6)
@@ -23,7 +24,8 @@ else
     width=80
 fi
 
-### parameter defaults
+#
+# parameter defaults
 doShell=false
 doStatus=false
 doStop=false
@@ -40,8 +42,8 @@ volumeMounts=""
 stopErr=0
 removeErr=0
 
-### functions
-
+#
+# functions
 checkExist() {
     if [ "$1" = 'file' ]; then
         if [ ! -f "$2" ]; then
@@ -119,7 +121,8 @@ textBlockParam() {
     fi
 }
 
-### pre-requisite checks
+#
+# pre-requisite checks
 
 # is docker installed?
 if ! command -v docker >/dev/null; then
@@ -135,6 +138,7 @@ if [ ! "$(id -u)" -eq 0 ]; then
     fi
 fi
 
+#
 # process startup parameters
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -187,7 +191,6 @@ if [ "$doStatus" = "true" ]; then
     exit 0
 fi
 
-
 #
 # stop container
 if [ "$doStop" = "true" ]; then
@@ -222,7 +225,6 @@ if [ "$doStop" = "true" ]; then
     fi
     exit 0
 fi
-
 
 #
 # run container
@@ -276,7 +278,6 @@ volumeMounts=${volumeMounts##[[:space:]]}
 
 # handle null HOSTNAMES
 if [ -z "$HOSTNAMES" ]; then HOSTNAMES="_"; fi
-
 
 # create network if it doesn't already exist
 docker network inspect ${NETWORK} >/dev/null 2>&1 ||
@@ -359,7 +360,6 @@ fi
 #
 # exit gracefully
 exit 0
-
 
 #
 # exit return codes
