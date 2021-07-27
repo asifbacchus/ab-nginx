@@ -42,12 +42,12 @@ checkExist() {
     if [ "$1" = 'file' ]; then
         if [ ! -f "$2" ]; then
             printf "%s\nCannot find file: '$2'. Exiting.\n%s" "$err" "$norm"
-            exit 3
+            exit 1
         fi
     elif [ "$1" = 'dir' ]; then
         if [ ! -d "$2" ]; then
             printf "%s\nCannot find directory: '$2'. Exiting.\n$%s" "$err" "$norm"
-            exit 3
+            exit 1
         fi
     fi
     return 0
@@ -114,7 +114,7 @@ fi
 if [ ! "$(id -u)" -eq 0 ]; then
     if ! id -Gn | grep docker >/dev/null; then
         printf "%s\nYou must either be root or in the 'docker' group to run this script since you must be able to actually start the container! Exiting.\n$%s" "$err" "$norm"
-        exit 2
+        exit 3
     fi
 fi
 
@@ -291,3 +291,15 @@ fi
 
 ### exit gracefully
 exit 0
+
+
+#
+# exit return codes
+# 0:        normal exit, no errors
+# 1:        missing or invalid parameter
+# 2:        cannot find docker
+# 3:        incorrect permissions to access docker
+# 1x:       operation errors
+#   11      no container found with specified name
+
+#EOF
