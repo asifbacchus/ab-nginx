@@ -147,19 +147,19 @@ fi
 
 # set up volume mounts
 if [ "$CONFIG_DIR" ]; then
-    vmount="$vmount -v $CONFIG_DIR:/etc/nginx/config"
+    volumeMounts="${volumeMounts} -v $CONFIG_DIR:/etc/nginx/config"
 fi
 if [ "$SERVERS_DIR" ]; then
-    vmount="$vmount -v $SERVERS_DIR:/etc/nginx/sites"
+    volumeMounts="${volumeMounts} -v $SERVERS_DIR:/etc/nginx/sites"
 fi
 if [ "$SNIPPETS_DIR" ]; then
-    vmount="$vmount -v $SNIPPETS_DIR:/etc/nginx/snippets"
+    volumeMounts="${volumeMounts} -v $SNIPPETS_DIR:/etc/nginx/snippets"
 fi
 if [ "$WEBROOT_DIR" ]; then
-    vmount="$vmount -v $WEBROOT_DIR:/usr/share/nginx/html"
+    volumeMounts="${volumeMounts} -v $WEBROOT_DIR:/usr/share/nginx/html"
 fi
 # trim leading whitespace
-vmount=${vmount##[[:space:]]}
+volumeMounts=${volumeMounts##[[:space:]]}
 
 # handle null HOSTNAMES
 if [ -z "$HOSTNAMES" ]; then HOSTNAMES="_"; fi
@@ -212,7 +212,7 @@ if [ -z "$SSL_CERT" ]; then
             --env-file ab-nginx.params \
             --user="${NGINX_UID:-8080}:${NGINX_GID:-8080}" \
             -e SERVER_NAMES="$HOSTNAMES" \
-            $vmount \
+            ${volumeMounts} \
             --network=${NETWORK} \
             -p ${HTTP_PORT}:80 \
             docker.asifbacchus.dev/nginx/ab-nginx:latest /bin/sh
@@ -224,7 +224,7 @@ if [ -z "$SSL_CERT" ]; then
             --env-file ab-nginx.params \
             --user="${NGINX_UID:-8080}:${NGINX_GID:-8080}" \
             -e SERVER_NAMES="$HOSTNAMES" \
-            $vmount \
+            ${volumeMounts} \
             --network=${NETWORK} \
             -p ${HTTP_PORT}:80 \
             --restart unless-stopped \
@@ -243,7 +243,7 @@ else
             --env-file ab-nginx.params \
             --user="${NGINX_UID:-8080}:${NGINX_GID:-8080}" \
             -e SERVER_NAMES="$HOSTNAMES" \
-            $vmount \
+            ${volumeMounts} \
             --network=${NETWORK} \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
@@ -261,7 +261,7 @@ else
             --env-file ab-nginx.params \
             --user="${NGINX_UID:-8080}:${NGINX_GID:-8080}" \
             -e SERVER_NAMES="$HOSTNAMES" \
-            $vmount \
+            ${volumeMounts} \
             --network=${NETWORK} \
             -v "$SSL_CERT":/certs/fullchain.pem:ro \
             -v "$SSL_KEY":/certs/privkey.pem:ro \
