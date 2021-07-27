@@ -135,56 +135,6 @@ if [ ! "$(id -u)" -eq 0 ]; then
     fi
 fi
 
-# does the params file exist?
-checkExist 'file' './ab-nginx.params'
-
-# read .params file
-. "./ab-nginx.params"
-
-# fix case of TLS13_ONLY var
-if [ "$TLS13_ONLY" ]; then
-    TLS13_ONLY=$(printf "%s" "$TLS13_ONLY" | tr "[:lower:]" "[:upper:]")
-fi
-
-# check for certs if using SSL
-if [ "$SSL_CERT" ]; then checkExist 'file' "$SSL_CERT"; fi
-if [ "$SSL_KEY" ]; then checkExist 'file' "$SSL_KEY"; fi
-if [ "$SSL_CHAIN" ]; then checkExist 'file' "$SSL_CHAIN"; fi
-
-# check if specified config directory exists
-if [ "$CONFIG_DIR" ]; then
-    checkExist 'dir' "$CONFIG_DIR"
-fi
-
-# check if specified server-block directory exists
-if [ "$SERVERS_DIR" ]; then
-    checkExist 'dir' "$SERVERS_DIR"
-fi
-
-# check if specified webroot directory exists
-if [ "$WEBROOT_DIR" ]; then
-    checkExist 'dir' "$WEBROOT_DIR"
-fi
-
-# set up volume mounts
-if [ "$CONFIG_DIR" ]; then
-    volumeMounts="${volumeMounts} -v $CONFIG_DIR:/etc/nginx/config"
-fi
-if [ "$SERVERS_DIR" ]; then
-    volumeMounts="${volumeMounts} -v $SERVERS_DIR:/etc/nginx/sites"
-fi
-if [ "$SNIPPETS_DIR" ]; then
-    volumeMounts="${volumeMounts} -v $SNIPPETS_DIR:/etc/nginx/snippets"
-fi
-if [ "$WEBROOT_DIR" ]; then
-    volumeMounts="${volumeMounts} -v $WEBROOT_DIR:/usr/share/nginx/html"
-fi
-# trim leading whitespace
-volumeMounts=${volumeMounts##[[:space:]]}
-
-# handle null HOSTNAMES
-if [ -z "$HOSTNAMES" ]; then HOSTNAMES="_"; fi
-
 # process startup parameters
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -276,6 +226,57 @@ fi
 
 #
 # run container
+
+# does the params file exist?
+checkExist 'file' './ab-nginx.params'
+
+# read .params file
+. "./ab-nginx.params"
+
+# fix case of TLS13_ONLY var
+if [ "$TLS13_ONLY" ]; then
+    TLS13_ONLY=$(printf "%s" "$TLS13_ONLY" | tr "[:lower:]" "[:upper:]")
+fi
+
+# check for certs if using SSL
+if [ "$SSL_CERT" ]; then checkExist 'file' "$SSL_CERT"; fi
+if [ "$SSL_KEY" ]; then checkExist 'file' "$SSL_KEY"; fi
+if [ "$SSL_CHAIN" ]; then checkExist 'file' "$SSL_CHAIN"; fi
+
+# check if specified config directory exists
+if [ "$CONFIG_DIR" ]; then
+    checkExist 'dir' "$CONFIG_DIR"
+fi
+
+# check if specified server-block directory exists
+if [ "$SERVERS_DIR" ]; then
+    checkExist 'dir' "$SERVERS_DIR"
+fi
+
+# check if specified webroot directory exists
+if [ "$WEBROOT_DIR" ]; then
+    checkExist 'dir' "$WEBROOT_DIR"
+fi
+
+# set up volume mounts
+if [ "$CONFIG_DIR" ]; then
+    volumeMounts="${volumeMounts} -v $CONFIG_DIR:/etc/nginx/config"
+fi
+if [ "$SERVERS_DIR" ]; then
+    volumeMounts="${volumeMounts} -v $SERVERS_DIR:/etc/nginx/sites"
+fi
+if [ "$SNIPPETS_DIR" ]; then
+    volumeMounts="${volumeMounts} -v $SNIPPETS_DIR:/etc/nginx/snippets"
+fi
+if [ "$WEBROOT_DIR" ]; then
+    volumeMounts="${volumeMounts} -v $WEBROOT_DIR:/usr/share/nginx/html"
+fi
+# trim leading whitespace
+volumeMounts=${volumeMounts##[[:space:]]}
+
+# handle null HOSTNAMES
+if [ -z "$HOSTNAMES" ]; then HOSTNAMES="_"; fi
+
 
 # create network if it doesn't already exist
 docker network inspect ${NETWORK} >/dev/null 2>&1 ||
