@@ -4,6 +4,8 @@
 # start ab-nginx container using params file variables
 #
 
+# TODO: add stop & stop and remove commands
+
 # text formatting presets
 if command -v tput >/dev/null; then
     cyan=$(tput bold)$(tput setaf 6)
@@ -127,16 +129,6 @@ fi
 if [ "$SSL_CERT" ]; then checkExist 'file' "$SSL_CERT"; fi
 if [ "$SSL_KEY" ]; then checkExist 'file' "$SSL_KEY"; fi
 if [ "$SSL_CHAIN" ]; then checkExist 'file' "$SSL_CHAIN"; fi
-
-# check for DHparam if using TLS1.2
-if [ "$SSL_CERT" ] && [ "$TLS13_ONLY" = 'FALSE' ]; then
-    if [ -z "$DH" ]; then
-        printf "%s\nA DHparam file must be specified when using TLS 1.2. Exiting.%s\n" "$err" "$norm"
-        exit 5
-    else
-        checkExist 'file' "$DH"
-    fi
-fi
 
 # check if specified config directory exists
 if [ "$CONFIG_DIR" ]; then
