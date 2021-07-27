@@ -231,6 +231,7 @@ fi
 checkExist 'file' './ab-nginx.params'
 
 # read .params file
+# shellcheck source=ab-nginx.params.template
 . "./ab-nginx.params"
 
 # fix case of TLS13_ONLY var
