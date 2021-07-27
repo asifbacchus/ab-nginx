@@ -4,8 +4,6 @@
 # start ab-nginx container using params file variables
 #
 
-# TODO: add stop & stop and remove commands
-
 # text formatting presets
 if command -v tput >/dev/null; then
     cyan=$(tput bold)$(tput setaf 6)
@@ -26,6 +24,8 @@ fi
 ### parameter defaults
 doShell=false
 doStatus=false
+doStop=false
+removeStopped=false
 container_name="ab-nginx"
 NETWORK='nginx_network'
 SUBNET='172.31.254.0/24'
@@ -35,6 +35,8 @@ CONFIG_DIR=""
 SERVERS_DIR=""
 WEBROOT_DIR=""
 volumeMounts=""
+stopErr=0
+removeErr=0
 
 ### functions
 
@@ -54,16 +56,21 @@ checkExist() {
 }
 
 scriptHelp() {
+    # header and description
     printf "\n%s" "$magenta"
     printf '%.0s-' $(seq "$width")
     printf "\n%s" "$norm"
     textBlock "This is a simple helper script so you can avoid typing lengthy commands when working with the ab-nginx container."
     textBlock "The script reads the contents of 'ab-nginx.params' and constructs various 'docker run' commands based on that file. The biggest time-saver is working with certificates. If they are specified in the params file, the script will automatically bind-mount them so nginx serves content via SSL by default."
     newline
+
+    # explanatory text
     textBlock "If you run the script with no parameters, it will execute the container 'normally': Run in detached mode with nginx automatically launched. If you specified certificates, nginx will serve over SSL by default."
     textBlock "Note: Containers (except shell) are always set to restart 'unless-stopped'. You must remove them manually if desired."
     printf "%s" "$magenta"
     newline
+
+    # parameters
     textBlock "The script has the following (optional) parameters:"
     textBlockParam 'parameter in cyan' 'default in yellow'
     newline
@@ -75,8 +82,16 @@ scriptHelp() {
     newline
     textBlockParam '--status'
     textBlock "Run a search for all AB-NGINX containers and display their name and status."
-    printf "%s" "$yellow"
     newline
+    textBlockParam '--stop'
+    textBlock "Stops the container specified by the '--name' parameter or with the default name 'ab-nginx'."
+    newline
+    textBlockParam '--remove | --stopremvoe'
+    textBlock "Stops and removes the container specified by the '--name' parameter or with the default name 'ab-nginx'."
+
+    # footer
+    newline
+    printf "%s" "$yellow"
     textBlock"More information can be found at: https://git.asifbacchus.dev/ab-docker/ab-nginx/wiki"
     printf "\n%s" "$magenta"
     printf '%.0s-' $(seq "$width")
@@ -193,6 +208,15 @@ while [ $# -gt 0 ]; do
         # find containers and check their status
         doStatus=true
         ;;
+    --stop)
+        # stop named container
+        doStop=true
+        ;;
+    --remove | --stopremove)
+        # stop and remove named container
+        doStop=true
+        removeStopped=true
+        ;;
     *)
         printf "%s\nUnknown option: %s\n" "$err" "$1"
         printf "Use '--help' for valid options.\n\n%s" "$norm"
@@ -210,6 +234,46 @@ if [ "$doStatus" = "true" ]; then
     printf "\n"
     exit 0
 fi
+
+
+#
+# stop container
+if [ "$doStop" = "true" ]; then
+    printf "\nStopping container '%s'... " "$container_name"
+
+    # ensure container exists
+    if ! docker inspect "$container_name" >/dev/null 2>&1; then
+        printf "[ERROR]: No container with that name found.\n\n"
+        exit 11
+    fi
+
+    # stop and/or remove container
+    if ! docker stop "$container_name" >/dev/null 2>&1; then stopErr=1; fi
+    if [ "$removeStopped" = "true" ] && [ "$stopErr" -eq 0 ]; then
+        if ! docker rm "$container_name" >/dev/null 2>&1; then removeErr=1; fi
+    fi
+
+    # update status message
+    if [ "$stopErr" -eq 1 ]; then
+        printf "[ERROR]: Unable to stop container. Please try removing it manually.\n\n"
+        exit 12
+    fi
+    if [ "$removeErr" -eq 1 ]; then
+        printf "[STOPPED]\n"
+        printf "[ERROR]: Unable to remove container. Please try removing it manually.\n\n"
+        exit 13
+    fi
+    if [ "$removeStopped" = "true" ]; then
+        printf "[REMOVED]\n\n"
+    else
+        printf "[STOPPED]\n\n"
+    fi
+    exit 0
+fi
+
+
+#
+# run container
 
 # create network if it doesn't already exist
 docker network inspect ${NETWORK} >/dev/null 2>&1 ||
@@ -289,7 +353,8 @@ else
     fi
 fi
 
-### exit gracefully
+#
+# exit gracefully
 exit 0
 
 
@@ -301,5 +366,7 @@ exit 0
 # 3:        incorrect permissions to access docker
 # 1x:       operation errors
 #   11      no container found with specified name
+#   12      unable to stop container
+#   13      unable to remove container
 
 #EOF
