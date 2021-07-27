@@ -30,10 +30,10 @@ NETWORK='nginx_network'
 SUBNET='172.31.254.0/24'
 HTTP_PORT=80
 HTTPS_PORT=443
-unset CONFIG_DIR
-unset SERVERS_DIR
-unset WEBROOT_DIR
-unset vmount
+CONFIG_DIR=""
+SERVERS_DIR=""
+WEBROOT_DIR=""
+volumeMounts=""
 
 ### functions
 
