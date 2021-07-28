@@ -196,6 +196,7 @@ if [ "$doScriptUpdate" -eq 1 ]; then
                 printf "\n%s*** This script has been updated. Please re-run it to load the updated version of this file. ***%s\n\n" "$warn" "$norm"
                 # overwrite this script with updated script
                 mv -f ./update.sh.tmp "$localScriptName"
+                chmod +x "$localScriptName"
                 exit 0
             fi
         fi
