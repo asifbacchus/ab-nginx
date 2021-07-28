@@ -32,9 +32,9 @@ scriptHelp() {
     textNewline
     textBlock "If run with no parameters, the script will update both the container and the helper script files, including this update script."
     textBlockHeader " parameters "
-    textBlockParam "-h|-?|--help" "Display this help screen."
-    textBlockParam "-c|--container|--container-only" "Update the docker container only."
-    textBlockParam "-s|--scripts|--scripts-only" "Update the helper scripts (including this update script) only."
+    textBlockParam "-h | -? | --help" "Display this help screen."
+    textBlockParam "-c | --container | --container-only" "Update the docker container only."
+    textBlockParam "-s| --scripts |--scripts-only" "Update the helper scripts (including this update script) only."
     textNewline
     exit 0
 }
@@ -157,7 +157,7 @@ fi
 #
 # update scripts
 if [ "$doScriptUpdate" -eq 1 ]; then
-    printf "%s*** Updating %s service scripts ***%s\n" "$info" "$containerName" "$norm"
+    printf "%s*** Updating %s helper scripts ***%s\n" "$info" "$containerName" "$norm"
 
     ## download latest checksums
     printf "Getting latest checksums... "
@@ -201,7 +201,12 @@ if [ "$doScriptUpdate" -eq 1 ]; then
     fi
 
     ## update files
+    # ensure directories exist
+    if ! mkdir config sites snippets >/dev/null 2>&1; then
+        errMsg "Unable to make directories in which to place updated files." 40
+    fi
     while IFS='  ' read -r field1 field2; do
+        if [ "$field2" = "update.sh" ]; then continue; fi
         printf "\nChecking '%s' for updates... " "$field2"
         updateFilename="$field2"
         repoFileChecksum="$field1"
@@ -274,6 +279,7 @@ exit 99
 # 2:        docker not found or no docker permissions
 # 31:       unable to update docker container
 # 4x:       helper files errors
+#   40:     unable to make download directories
 #   41:     unable to download checksums
 #   42:     update script: unable to download or bad checksum
 #   43:     update helpers: unable to download
