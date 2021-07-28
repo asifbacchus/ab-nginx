@@ -10,7 +10,7 @@
 # functions
 errMsg() {
     printf "\n%s%s%s\n\n" "$err" "$1" "$norm"
-    exit 1
+    [ -n "$2" ] && exit "$2" || exit 1
 }
 
 errNotify() {
@@ -136,19 +136,19 @@ done
 if [ "$doDockerUpdate" -eq 1 ]; then
     # check if docker is installed
     if ! command -v docker >/dev/null 2>&1; then
-        errMsg "Sorry, it appears that docker is not installed on this machine! Exiting."
+        errMsg "Sorry, it appears that docker is not installed on this machine! Exiting." 2
     fi
 
     # is user root or in the docker group?
     if [ ! "$(id -u)" -eq 0 ]; then
         if ! id -Gn | grep docker >/dev/null; then
-            errMsg "You must either be root or in the 'docker' group to pull container updates."
+            errMsg "You must either be root or in the 'docker' group to pull container updates." 2
         fi
     fi
 
     printf "%s\n*** Updating %s container ***\n\n%s" "$info" "$containerName" "$norm"
     if ! docker pull "$containerUpdatePath"; then
-        errMsg "There was an error updating the container. Try again later."
+        errMsg "There was an error updating the container. Try again later." 31
     else
         okMsg "Container updated!"
     fi
@@ -163,7 +163,7 @@ if [ "$doScriptUpdate" -eq 1 ]; then
     printf "Getting latest checksums... "
     if ! wget --quiet --tries=3 --timeout=10 -N "${server}${checksumFilename}"; then
         errNotify
-        errMsg "Unable to download checksums. Try again later."
+        errMsg "Unable to download checksums. Try again later." 41
     else
         okNotify
     fi
@@ -182,7 +182,7 @@ if [ "$doScriptUpdate" -eq 1 ]; then
             errNotify
             # delete failed download as necessary
             rm -f ./update.sh.tmp 2>/dev/null
-            errMsg "Unable to download script update. Try again later."
+            errMsg "Unable to download script update. Try again later." 42
         else
             # verify download
             dlScriptChecksum=$(sha256sum "update.sh.tmp" | grep -o '^\S*')
@@ -190,7 +190,7 @@ if [ "$doScriptUpdate" -eq 1 ]; then
                 printf "[ERROR]\n"
                 # delete corrupt download as necessary
                 rm -f ./update.sh.tmp 2>/dev/null
-                errMsg "Checksum mismatch! Try again later."
+                errMsg "Checksum mismatch! Try again later." 42
             else
                 okNotify
                 printf "\n%s*** This script has been updated. Please re-run it to load the updated version of this file. ***%s\n\n" "$warn" "$norm"
@@ -255,4 +255,29 @@ if [ "$doScriptUpdate" -eq 1 ]; then
     printf "\tUpdates: %s%s applied%s, %s%s failed%s\n" "$ok" "$updateSuccess" "$norm" "$err" "$updateFailed" "$norm"
 fi
 
-exit 0
+#
+# exit
+if [ "$downloadFailed" -gt 0 ]; then
+    exit 43
+elif [ "$updateFailed" -gt 0 ]; then
+    exit 44
+else
+    exit 0
+fi
+# this is a trap for mis-coding... should never get an exit code 99!
+exit 99
+
+#
+# exit return codes
+# 0:        normal exit, no errors
+# 1:        missing or invalid parameter
+# 2:        docker not found or no docker permissions
+# 31:       unable to update docker container
+# 4x:       helper files errors
+#   41:     unable to download checksums
+#   42:     update script: unable to download or bad checksum
+#   43:     update helpers: unable to download
+#   44:     update helpers: bad checksum, no update
+# 99:       coding mistake trap -- this return code should never happen!
+
+#EOF
