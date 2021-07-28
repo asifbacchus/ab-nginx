@@ -19,8 +19,9 @@ fi
 
 # generate checksum file
 \rm -f "${srcDir}/checksums.sha256"
-find "${srcDir}/" -type f -exec sha256sum {} + >>"${srcDir}/checksums.sha256"
-sed -i "s+$srcDir/++g" "${srcDir}/checksums.sha256"
+find "${srcDir}/" -type f -exec sha256sum {} + >>./checksums.sha256
+sed -i "s+$srcDir/++g" ./checksums.sha256
+\mv ./checksums.sha256 "${srcDir}/"
 
 # exit gracefully
 exit 0
