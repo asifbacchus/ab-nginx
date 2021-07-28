@@ -25,6 +25,15 @@ okNotify() {
     printf "%s[OK]%s\n" "$ok" "$norm"
 }
 
+makeDirectory() {
+    if ! [ -d "./$1" ]; then
+        if ! mkdir"./$1" >/dev/null 2>&1; then
+            errMsgString="Unable to make '$1' directory."
+            errMsg "$errMsgString" 40
+        fi
+    fi
+}
+
 scriptHelp() {
     textNewline
     textBlock "Update ${containerName} container and helper script files"
@@ -203,10 +212,10 @@ if [ "$doScriptUpdate" -eq 1 ]; then
     fi
 
     ## update files
-    # ensure directories exist
-    if ! mkdir config sites snippets >/dev/null 2>&1; then
-        errMsg "Unable to make directories in which to place updated files." 40
-    fi
+    makeDirectory "config"
+    makeDirectory "sites"
+    makeDirectory "snippets"
+
     while IFS='  ' read -r field1 field2; do
         if [ "$field2" = "update.sh" ]; then continue; fi
         printf "\nChecking '%s' for updates... " "$field2"
