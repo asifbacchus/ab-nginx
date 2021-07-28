@@ -27,7 +27,7 @@ okNotify() {
 
 makeDirectory() {
     if ! [ -d "./$1" ]; then
-        if ! mkdir"./$1" >/dev/null 2>&1; then
+        if ! mkdir "./$1" >/dev/null 2>&1; then
             errMsgString="Unable to make '$1' directory."
             errMsg "$errMsgString" 40
         fi
