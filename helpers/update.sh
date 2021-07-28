@@ -245,6 +245,10 @@ if [ "$doScriptUpdate" -eq 1 ]; then
                     updateSuccess=$((updateSuccess + 1))
                     # overwrite old version of file
                     mv -f "$updateFilename.tmp" "$updateFilename"
+                    if [ "${updateFilename##*.}" = "sh" ]; then
+                        # shell file --> make it executable
+                        chmod +x "$updateFilename"
+                    fi
                 fi
             fi
         else
