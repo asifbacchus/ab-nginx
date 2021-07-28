@@ -25,6 +25,7 @@ RUN addgroup --gid ${GID} www-docker \
 RUN apk --update --no-cache add \
     libcap \
     openssl \
+    && apk --update --no-cache upgrade \
     && setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx \
     && cd /usr/share/nginx \
     && rm -rf html/* \
