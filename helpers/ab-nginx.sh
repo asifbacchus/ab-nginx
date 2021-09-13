@@ -94,7 +94,7 @@ scriptHelp() {
     # footer
     newline
     printf "%s" "$yellow"
-    textBlock"More information can be found at: https://git.asifbacchus.dev/ab-docker/ab-nginx/wiki"
+    textBlock "More information can be found at: https://git.asifbacchus.dev/ab-docker/ab-nginx/wiki"
     printf "\n%s" "$magenta"
     printf '%.0s-' $(seq "$width")
     printf "\n%s" "$norm"
