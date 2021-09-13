@@ -21,7 +21,10 @@ RUN addgroup --gid ${GID} www-docker \
         --uid ${UID} \
         www-docker
 
-# add libcap, allow nginx to bind to ports <1024, extract fun error pages & create LetsEncrypt challenge directory outside webroot
+# add libcap and allow nginx to bind to ports <1024;
+# extract fun error pages;
+# create /certs directory for auto-generation;
+# create LetsEncrypt challenge directory outside webroot
 RUN apk --update --no-cache add \
     libcap \
     openssl \
@@ -35,6 +38,7 @@ RUN apk --update --no-cache add \
     && rm -rf /tmp/* \
     && rm -rf /docker-entrypoint.d \
     && rm -f /docker-entrypoint.sh \
+    && mkdir /certs \
     && mkdir /usr/share/nginx/letsencrypt
 
 # health check
@@ -77,6 +81,8 @@ RUN chown -R www-docker:www-docker /usr/share/nginx \
     && find /etc/nginx -type f -exec chmod 640 {} \; \
     && chown www-docker:www-docker /var/cache/nginx \
     && chown www-docker:www-docker /var/log/nginx \
+    && chown www-docker:www-docker /certs \
+    && chmod 700 /certs \
     && chmod 644 /etc/selfsigned.cnf \
     && chmod 755 /usr/local/bin/generate-cert /usr/local/bin/entrypoint.sh
 USER www-docker
