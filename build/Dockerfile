@@ -2,7 +2,7 @@
 # build AB-NGINX container (based on NGINX mainline)
 #
 
-ARG NGINX_VERSION=1.21.1
+ARG NGINX_VERSION=1.21.3
 FROM nginx:${NGINX_VERSION}-alpine
 ARG NGINX_VERSION
 
