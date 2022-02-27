@@ -62,6 +62,7 @@
 *.min.css  text eol=lf
 *.js       text eol=lf
 *.min.js   text eol=lf
+*.php      text eol=lf
 
 # Visual Studio projects (Rider also)
 *.cs     diff=csharp
